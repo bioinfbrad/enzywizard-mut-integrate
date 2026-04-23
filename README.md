@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/1219038512.svg)](https://doi.org/10.5281/zenodo.19709967)
 
 # EnzyWizard-Mut_Integrate
 
