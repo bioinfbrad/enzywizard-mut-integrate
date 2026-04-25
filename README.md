@@ -21,7 +21,7 @@ machine learning, and enzyme engineering studies.
 
 Example command:
 
-enzywizard-mut_integrate -i examples/input/mut_clean_report_WT_to_MUT.json -w examples/input/wt_reports/ -m examples/input/mut_reports/ -wo examples/output/wt/ -mo examples/output/mut/
+enzywizard-mut_integrate -i examples/wt_input/mut_clean_report_1ZG4_WT_to_1ZG6_S70G.json -w examples/wt_input/ -m examples/mut_input/ -wo examples/wt_output/ -mo examples/mut_output/
 
 
 # input parameters:
