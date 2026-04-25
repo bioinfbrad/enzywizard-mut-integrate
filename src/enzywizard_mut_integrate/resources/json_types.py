@@ -34,13 +34,11 @@ class ResidueMapping(TypedDict):
 
 
 class CleanStatistics(TypedDict):
+    removed_heterogen: int
     changed_resname: int
-    removed_nonstd: int
-    removed_missing_bb: int
-    removed_missing_heavy_atoms: int
-    removed_unexpected_heavy_atoms: int
-    removed_bad_occ: int
-    removed_inscodes: int
+    fixed_residues: int
+    added_heavy_atoms: int
+    added_hydrogen_atoms: int
     kept_residues: int
 
 

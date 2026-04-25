@@ -5,13 +5,12 @@
 EnzyWizard-Mut-Integrate is a command-line tool for integrating wild-type and
 mutant EnzyWizard JSON reports and constructing matched wild-type / mutant
 protein graph representations.
-It takes one enzywizard_mut_clean report together with one wild-type report
-directory and one mutant report directory as input, and merges information
+It takes a enzywizard_mut_clean report, a wild-type report
+directory and a mutant report directory as input, and merges information
 from supported report types into structured paired graph datasets, where nodes
-represent amino acids or substrates, and edges represent relationships such as
-interactions.
-The input enzywizard_mut_clean report is used as the anchor for cleaned mutation
-definition, residue indexing, and wild-type / mutant residue mapping.
+represent amino acids or substrates, and edges represent interactions.
+The input enzywizard_mut_clean report is used as the anchor for cleaned amino acid 
+substitution, residue indexing, and wild-type / mutant residue mapping.
 Additional reports on each side provide complementary features.
 The tool integrates the paired graph data, enabling direct downstream use in
 mutation effect analysis, wild-type / mutant graph comparison, graph-based
@@ -74,13 +73,7 @@ wt_output_dir and mut_output_dir must be different directories.
 
 --strict
 Optional.
-Whether to require all supported side report types on both wild-type and mutant sides.
-
-Default:
-  False
-
-If True, the program requires exactly all supported side report types in both
-wt_input_dir and mut_input_dir and applies stricter integration checks.
+Enable strict mode requiring all 12 report types and all node fields.
 
 
 # output content:

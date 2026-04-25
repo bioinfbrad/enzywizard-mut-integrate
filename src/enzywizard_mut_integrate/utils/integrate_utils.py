@@ -135,8 +135,24 @@ def split_integrated_graph_entries(
         logger.print("[ERROR] integrated_graph must be a list.")
         return None
 
-    node_list: List[Dict[str, Any]] = []
+    node_by_id: Dict[int, Dict[str, Any]] = {}
     edge_list: List[Dict[str, Any]] = []
+
+    def add_node(node: Any) -> bool:
+        if not isinstance(node, dict):
+            logger.print("[ERROR] Invalid node in integrated_graph.")
+            return False
+
+        node_id = node.get("node_id")
+        if not isinstance(node_id, int):
+            logger.print("[ERROR] Invalid or missing node_id in integrated_graph node.")
+            return False
+
+        if node_id in node_by_id:
+            return True
+
+        node_by_id[node_id] = node
+        return True
 
     for item in integrated_graph:
         if not isinstance(item, dict):
@@ -144,12 +160,22 @@ def split_integrated_graph_entries(
             return None
 
         if "node_1" in item and "edge" not in item and "node_2" not in item:
-            node_list.append(item["node_1"])
+            if not add_node(item["node_1"]):
+                return None
+
         elif "edge" in item and "node_1" in item and "node_2" in item:
             edge_list.append(item)
+
+            if not add_node(item["node_1"]):
+                return None
+            if not add_node(item["node_2"]):
+                return None
+
         else:
             logger.print("[ERROR] Invalid integrated_graph entry structure.")
             return None
+
+    node_list = [node_by_id[node_id] for node_id in sorted(node_by_id.keys())]
 
     return node_list, edge_list
 
@@ -481,13 +507,11 @@ def validate_clean_report(data: Dict[str, Any], logger: Logger) -> bool:
         return False
 
     required_stat_keys = [
+        "removed_heterogen",
         "changed_resname",
-        "removed_nonstd",
-        "removed_missing_bb",
-        "removed_missing_heavy_atoms",
-        "removed_unexpected_heavy_atoms",
-        "removed_bad_occ",
-        "removed_inscodes",
+        "fixed_residues",
+        "added_heavy_atoms",
+        "added_hydrogen_atoms",
         "kept_residues",
     ]
     for k in required_stat_keys:

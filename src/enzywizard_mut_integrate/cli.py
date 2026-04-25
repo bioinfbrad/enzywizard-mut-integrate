@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import argparse
 
-from .commands.clean import add_clean_parser
+from .commands.mut_integrate import add_mut_integrate_parser
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="enzywizard-clean",
-        description="EnzyWizard-Clean: Clean protein structures, generate multi-format protein files (CIF, PDB, and FASTA), and provide a detailed traceable cleaning report."
+        prog="enzywizard-mut-integrate",
+        description="EnzyWizard-Mut-Integrate: Integrate wild-type and mutant EnzyWizard JSON reports and constructing matched wild-type / mutant protein graph representations."
     )
-    add_clean_parser(parser)
+    add_mut_integrate_parser(parser)
     return parser
 
 

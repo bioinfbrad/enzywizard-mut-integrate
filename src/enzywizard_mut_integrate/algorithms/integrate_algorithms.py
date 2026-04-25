@@ -176,9 +176,6 @@ def build_integrated_graph(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
         logger.print("[ERROR] interactions must be a list.")
         return None
 
-    if len(interactions) == 0:
-        return []
-
     amino_acid_node_list = build_amino_acid_nodes(report_dict, strict, logger)
     if amino_acid_node_list is None:
         return None
@@ -192,12 +189,6 @@ def build_integrated_graph(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
     for i, node in enumerate(all_node_list, start=1):
         node["node_id"] = i
 
-    node_entry_list: List[Dict[str, Any]] = []
-    for node in all_node_list:
-        node_entry_list.append({
-            "node_1": node
-        })
-
     node_lookup = build_integrated_node_lookup(all_node_list, logger)
     if node_lookup is None:
         return None
@@ -206,7 +197,26 @@ def build_integrated_graph(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
     if edge_entry_list is None:
         return None
 
-    return node_entry_list + edge_entry_list
+    connected_node_id_set = set()
+    for edge_entry in edge_entry_list:
+        node_1 = edge_entry.get("node_1")
+        node_2 = edge_entry.get("node_2")
+
+        if not isinstance(node_1, dict) or not isinstance(node_2, dict):
+            logger.print("[ERROR] Invalid edge entry while collecting connected nodes.")
+            return None
+
+        connected_node_id_set.add(node_1["node_id"])
+        connected_node_id_set.add(node_2["node_id"])
+
+    isolated_node_entry_list: List[Dict[str, Any]] = []
+    for node in all_node_list:
+        if node["node_id"] not in connected_node_id_set:
+            isolated_node_entry_list.append({
+                "node_1": node
+            })
+
+    return edge_entry_list + isolated_node_entry_list
 
 
 def build_amino_acid_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,logger: Logger,) -> List[Dict[str, Any]] | None:
@@ -452,7 +462,12 @@ def build_integrated_node_lookup(all_node_list: List[Dict[str, Any]],logger: Log
     return lookup
 
 
-def build_edge_entries_from_interactions(interactions: List[Dict[str, Any]],node_lookup: Dict[Tuple[str, int, str], Dict[str, Any]],strict: bool,logger: Logger) -> List[Dict[str, Any]] | None:
+def build_edge_entries_from_interactions(
+    interactions: List[Dict[str, Any]],
+    node_lookup: Dict[Tuple[Any, ...], Dict[str, Any]],
+    strict: bool,
+    logger: Logger
+) -> List[Dict[str, Any]] | None:
     merged_edge_count: Dict[Tuple[str, int, int], int] = {}
     merged_edge_nodes: Dict[Tuple[str, int, int], Tuple[Dict[str, Any], Dict[str, Any]]] = {}
 

@@ -181,13 +181,11 @@ def validate_mutclean_report(data: Dict[str, Any], logger: Logger) -> bool:
         return False
 
     required_stat_keys = [
+        "removed_heterogen",
         "changed_resname",
-        "removed_nonstd",
-        "removed_missing_bb",
-        "removed_missing_heavy_atoms",
-        "removed_unexpected_heavy_atoms",
-        "removed_bad_occ",
-        "removed_inscodes",
+        "fixed_residues",
+        "added_heavy_atoms",
+        "added_hydrogen_atoms",
         "kept_residues",
     ]
 

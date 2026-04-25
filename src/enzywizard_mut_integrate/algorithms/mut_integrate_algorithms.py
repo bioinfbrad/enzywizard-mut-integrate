@@ -184,12 +184,6 @@ def build_mut_integrated_graphs(
     strict: bool,
     logger: Logger,
 ) -> Tuple[List[Dict[str, Any]] | None, List[Dict[str, Any]] | None]:
-    wt_interaction = wt_report_dict.get("enzywizard_interaction")
-    mut_interaction = mut_report_dict.get("enzywizard_interaction")
-
-    if wt_interaction is None or mut_interaction is None:
-        return [], []
-
     wt_integrated_graph = build_integrated_graph(wt_report_dict, strict=False, logger=logger)
     if wt_integrated_graph is None:
         return None, None

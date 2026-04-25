@@ -1,0 +1,225 @@
+{
+  "output_type": "enzywizard_hydrocluster",
+  "hydrophobic_cluster_statistics": {
+    "cluster_num": 3,
+    "max_cluster_area": 4423.94797496287,
+    "total_cluster_area": 6811.34177218245
+  },
+  "hydrophobic_cluster": [
+    {
+      "area": 4423.94797496287,
+      "residues": [
+        {
+          "aa_id": 22,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 24,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 26,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 31,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 49,
+          "aa_name": "V"
+        },
+        {
+          "aa_id": 50,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 51,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 55,
+          "aa_name": "V"
+        },
+        {
+          "aa_id": 56,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 59,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 66,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 70,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 94,
+          "aa_name": "V"
+        },
+        {
+          "aa_id": 97,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 102,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 112,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 113,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 114,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 117,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 123,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 127,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 137,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 144,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 159,
+          "aa_name": "V"
+        },
+        {
+          "aa_id": 165,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 168,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 169,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 174,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 182,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 183,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 221,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 233,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 235,
+          "aa_name": "V"
+        }
+      ]
+    },
+    {
+      "area": 2303.6178173320013,
+      "residues": [
+        {
+          "aa_id": 5,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 8,
+          "aa_name": "V"
+        },
+        {
+          "aa_id": 19,
+          "aa_name": "V"
+        },
+        {
+          "aa_id": 195,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 196,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 200,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 206,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 220,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 224,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 234,
+          "aa_name": "V"
+        },
+        {
+          "aa_id": 236,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 252,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 255,
+          "aa_name": "I"
+        },
+        {
+          "aa_id": 259,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 260,
+          "aa_name": "I"
+        }
+      ]
+    },
+    {
+      "area": 83.77597988757901,
+      "residues": [
+        {
+          "aa_id": 77,
+          "aa_name": "L"
+        },
+        {
+          "aa_id": 88,
+          "aa_name": "L"
+        }
+      ]
+    }
+  ]
+}

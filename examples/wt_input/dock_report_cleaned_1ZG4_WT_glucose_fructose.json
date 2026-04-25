@@ -1,0 +1,22 @@
+{
+  "output_type": "enzywizard_dock",
+  "docked_result": {
+    "complex_name": "docked_cleaned_1ZG4_WT_glucose_fructose",
+    "docking_score": -9.753,
+    "substrate_names": "glucose,fructose",
+    "docking_box_center": [11.3953, 10.8061, 36.3974],
+    "docking_box_size": [11.2854, 8.287799999999997, 11.05],
+    "docked_substrates": [
+      {
+        "substrate_name": "glucose",
+        "conformation_name": "glucose_1",
+        "docked_center_coord": [12.092058823529412, 10.330588235294117, 37.92888235294118]
+      },
+      {
+        "substrate_name": "fructose",
+        "conformation_name": "fructose_1",
+        "docked_center_coord": [8.37176470588235, 12.187941176470591, 34.96670588235294]
+      }
+    ]
+  }
+}
