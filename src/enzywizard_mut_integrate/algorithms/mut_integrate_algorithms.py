@@ -16,17 +16,17 @@ from ..utils.sequence_utils import normalize_aa_name_to_one_letter
 def generate_mut_integrate_report(
     cleaned_amino_acid_substitution: str,
     overall_statistics: Dict[str, Any],
-    mutation_site_features: Dict[str, Any],
+    amino_acid_substitution_properties: Dict[str, Any],
     wt_integrated_graph: List[Dict[str, Any]],
     mut_integrated_graph: List[Dict[str, Any]],
 ) -> Dict[str, Any]:
     return {
-        "output_type": "enzywizard_mut_integrate",
+        "report_type": "enzywizard_mut_integrate",
         "cleaned_amino_acid_substitution": cleaned_amino_acid_substitution,
         "overall_statistics": overall_statistics,
-        "mutation_site_features": mutation_site_features,
-        "wt_integrated_graph": wt_integrated_graph,
-        "mut_integrated_graph": mut_integrated_graph,
+        "amino_acid_substitution_properties": amino_acid_substitution_properties,
+        "wild_type_integrated_graph": wt_integrated_graph,
+        "mutant_integrated_graph": mut_integrated_graph,
     }
 
 
@@ -78,11 +78,11 @@ def integrate_mut_reports(
         return None
 
     if len(wt_new_residue_list) == 0:
-        logger.print("[ERROR] wt_amino_acid_mapping_old_to_new cannot be empty.")
+        logger.print("[ERROR] wild_type_residue_mapping_old_to_new cannot be empty.")
         return None
 
     if len(mut_new_residue_list) == 0:
-        logger.print("[ERROR] mut_amino_acid_mapping_old_to_new cannot be empty.")
+        logger.print("[ERROR] mutant_residue_mapping_old_to_new cannot be empty.")
         return None
 
     if not check_amino_acid_substitution(
@@ -102,13 +102,13 @@ def integrate_mut_reports(
     if overall_statistics is None:
         return None
 
-    mutation_site_features = build_mutation_site_features(
+    amino_acid_substitution_properties = build_mutation_site_features(
         mutclean_report=mutclean_report,
         wt_report_dict=wt_report_dict_full,
         mut_report_dict=mut_report_dict_full,
         logger=logger,
     )
-    if mutation_site_features is None:
+    if amino_acid_substitution_properties is None:
         return None
 
     wt_integrated_graph, mut_integrated_graph = build_mut_integrated_graphs(
@@ -123,7 +123,7 @@ def integrate_mut_reports(
     return generate_mut_integrate_report(
         cleaned_amino_acid_substitution=cleaned_amino_acid_substitution,
         overall_statistics=overall_statistics,
-        mutation_site_features=mutation_site_features,
+        amino_acid_substitution_properties=amino_acid_substitution_properties,
         wt_integrated_graph=wt_integrated_graph,
         mut_integrated_graph=mut_integrated_graph,
     )
@@ -184,11 +184,11 @@ def build_mut_integrated_graphs(
     strict: bool,
     logger: Logger,
 ) -> Tuple[List[Dict[str, Any]] | None, List[Dict[str, Any]] | None]:
-    wt_integrated_graph = build_integrated_graph(wt_report_dict, strict=False, logger=logger)
+    wt_integrated_graph = build_integrated_graph(wt_report_dict, strict=strict, logger=logger)
     if wt_integrated_graph is None:
         return None, None
 
-    mut_integrated_graph = build_integrated_graph(mut_report_dict, strict=False, logger=logger)
+    mut_integrated_graph = build_integrated_graph(mut_report_dict, strict=strict, logger=logger)
     if mut_integrated_graph is None:
         return None, None
 
@@ -198,29 +198,29 @@ def reorder_mutation_site_features(data: Dict[str, Any]) -> Dict[str, Any]:
     ordered: Dict[str, Any] = {}
 
     field_order = [
-        "aa_name",
-        "aa_name_one_hot",
-        "aa_class",
-        "aa_class_one_hot",
-        "aa_ss",
-        "aa_ss_one_hot",
-        "aa_rsa",
-        "aa_phi",
-        "aa_psi",
-        "aa_net_charge",
-        "aa_pka",
-        "aa_volume",
-        "aa_hydrophobicity",
-        "aa_molecular_weight",
-        "aa_pi",
-        "rmsf",
-        "conservation_score",
+        "residue_name",
+        "residue_name_one_hot_encoding",
+        "residue_chemical_classification",
+        "residue_chemical_classification_one_hot_encoding",
+        "residue_secondary_structure",
+        "residue_secondary_structure_one_hot_encoding",
+        "residue_relative_solvent_accessibility",
+        "residue_backbone_phi_angle",
+        "residue_backbone_psi_angle",
+        "residue_net_charge",
+        "residue_pka",
+        "residue_volume",
+        "residue_hydrophobicity",
+        "residue_molecular_weight",
+        "residue_isoelectric_point",
+        "residue_root_mean_square_fluctuation",
+        "residue_sequence_conservation_score",
     ]
 
     for field_name in field_order:
-        wt_key = f"wt_{field_name}"
-        mut_key = f"mut_{field_name}"
-        diff_key = f"diff_{field_name}"
+        wt_key = f"wild_type_{field_name}"
+        mut_key = f"mutant_{field_name}"
+        diff_key = f"difference_{field_name}"
 
         if wt_key in data:
             ordered[wt_key] = data[wt_key]
@@ -246,7 +246,7 @@ def build_mutation_site_features(
     wt_clean_report = wt_report_dict.get("enzywizard_clean")
     mut_clean_report = mut_report_dict.get("enzywizard_clean")
     if not isinstance(wt_clean_report, dict) or not isinstance(mut_clean_report, dict):
-        logger.print("[ERROR] Missing synthesized clean report while building mutation_site_features.")
+        logger.print("[ERROR] Missing synthesized clean report while building amino_acid_substitution_properties.")
         return None
 
     cleaned_amino_acid_substitution = mutclean_report.get("cleaned_amino_acid_substitution")
@@ -263,11 +263,11 @@ def build_mutation_site_features(
         return None
 
     wt_residue_lookup = {
-        int(item["aa_id"]): normalize_aa_name_to_one_letter(item["aa_name"])
+        int(item["residue_index"]): normalize_aa_name_to_one_letter(item["residue_name"])
         for item in wt_new_residue_list
     }
     mut_residue_lookup = {
-        int(item["aa_id"]): normalize_aa_name_to_one_letter(item["aa_name"])
+        int(item["residue_index"]): normalize_aa_name_to_one_letter(item["residue_name"])
         for item in mut_new_residue_list
     }
 
@@ -282,37 +282,61 @@ def build_mutation_site_features(
 
     if "enzywizard_aaprops" in wt_report_dict:
         wt_aaprops_lookup = build_lookup_by_residue(
-            wt_report_dict["enzywizard_aaprops"]["aa_props"], "aa_id", "aa_name", logger
+            wt_report_dict["enzywizard_aaprops"]["amino_acid_residue_properties"],
+            "residue_index",
+            "residue_name",
+            logger,
         )
         if wt_aaprops_lookup is None:
             return None
 
     if "enzywizard_aaprops" in mut_report_dict:
         mut_aaprops_lookup = build_lookup_by_residue(
-            mut_report_dict["enzywizard_aaprops"]["aa_props"], "aa_id", "aa_name", logger
+            mut_report_dict["enzywizard_aaprops"]["amino_acid_residue_properties"],
+            "residue_index",
+            "residue_name",
+            logger,
         )
         if mut_aaprops_lookup is None:
             return None
 
     if "enzywizard_flexibility" in wt_report_dict:
         wt_flexibility_lookup = build_lookup_by_residue(
-            wt_report_dict["enzywizard_flexibility"]["protein_rmsf"], "aa_id", "aa_name", logger
+            wt_report_dict["enzywizard_flexibility"]["protein_flexibility"],
+            "residue_index",
+            "residue_name",
+            logger,
         )
         if wt_flexibility_lookup is None:
             return None
 
     if "enzywizard_flexibility" in mut_report_dict:
-        mut_flexibility_lookup = build_lookup_by_residue(mut_report_dict["enzywizard_flexibility"]["protein_rmsf"], "aa_id", "aa_name", logger)
+        mut_flexibility_lookup = build_lookup_by_residue(
+            mut_report_dict["enzywizard_flexibility"]["protein_flexibility"],
+            "residue_index",
+            "residue_name",
+            logger,
+        )
         if mut_flexibility_lookup is None:
             return None
 
     if "enzywizard_conservation" in wt_report_dict:
-        wt_conservation_lookup = build_lookup_by_residue(wt_report_dict["enzywizard_conservation"]["conservation_scores"],"aa_id","aa_name",logger,)
+        wt_conservation_lookup = build_lookup_by_residue(
+            wt_report_dict["enzywizard_conservation"]["sequence_conservation_scores"],
+            "residue_index",
+            "residue_name",
+            logger,
+        )
         if wt_conservation_lookup is None:
             return None
 
     if "enzywizard_conservation" in mut_report_dict:
-        mut_conservation_lookup = build_lookup_by_residue(mut_report_dict["enzywizard_conservation"]["conservation_scores"], "aa_id", "aa_name", logger)
+        mut_conservation_lookup = build_lookup_by_residue(
+            mut_report_dict["enzywizard_conservation"]["sequence_conservation_scores"],
+            "residue_index",
+            "residue_name",
+            logger,
+        )
         if mut_conservation_lookup is None:
             return None
 
@@ -358,14 +382,14 @@ def build_mutation_site_features(
     wt_conservation_score_list: List[float] = []
     mut_conservation_score_list: List[float] = []
 
-    wt_aa_name_one_hot_list: List[List[float]] = []
-    mut_aa_name_one_hot_list: List[List[float]] = []
+    wt_residue_name_one_hot_list: List[List[float]] = []
+    mut_residue_name_one_hot_list: List[List[float]] = []
 
-    wt_aa_class_one_hot_list: List[List[float]] = []
-    mut_aa_class_one_hot_list: List[List[float]] = []
+    wt_residue_class_one_hot_list: List[List[float]] = []
+    mut_residue_class_one_hot_list: List[List[float]] = []
 
-    wt_aa_ss_one_hot_list: List[List[float]] = []
-    mut_aa_ss_one_hot_list: List[List[float]] = []
+    wt_residue_ss_one_hot_list: List[List[float]] = []
+    mut_residue_ss_one_hot_list: List[List[float]] = []
 
     for wt_aa_expected, pos, mut_aa_expected in mut_list:
         wt_aa_actual = wt_residue_lookup.get(pos)
@@ -402,101 +426,101 @@ def build_mutation_site_features(
         if wt_aaprops_lookup is not None:
             wt_item = wt_aaprops_lookup.get(wt_key)
             if wt_item is None:
-                logger.print(f"[ERROR] Missing WT aa_props entry for mutation site: {pos} {wt_aa_actual}")
+                logger.print(f"[ERROR] Missing WT amino_acid_residue_properties entry for mutation site: {pos} {wt_aa_actual}")
                 return None
-            wt_class_list.append(wt_item["aa_class"])
-            wt_ss_list.append(wt_item["aa_ss"])
-            wt_rsa_list.append(float(wt_item["aa_rsa"]))
-            wt_phi_list.append(float(wt_item["aa_phi"]))
-            wt_psi_list.append(float(wt_item["aa_psi"]))
-            wt_net_charge_list.append(float(wt_item["aa_net_charge"]))
-            wt_pka_list.append(float(wt_item["aa_pka"]))
-            wt_volume_list.append(float(wt_item["aa_volume"]))
-            wt_hydrophobicity_list.append(float(wt_item["aa_hydrophobicity"]))
-            wt_molecular_weight_list.append(float(wt_item["aa_molecular_weight"]))
-            wt_pi_list.append(float(wt_item["aa_pi"]))
-            wt_aa_name_one_hot_list.append([float(x) for x in wt_item["aa_name_one_hot"]])
-            wt_aa_class_one_hot_list.append([float(x) for x in wt_item["aa_class_one_hot"]])
-            wt_aa_ss_one_hot_list.append([float(x) for x in wt_item["aa_ss_one_hot"]])
+            wt_class_list.append(wt_item["residue_chemical_classification"])
+            wt_ss_list.append(wt_item["residue_secondary_structure"])
+            wt_rsa_list.append(float(wt_item["residue_relative_solvent_accessibility"]))
+            wt_phi_list.append(float(wt_item["residue_backbone_phi_angle"]))
+            wt_psi_list.append(float(wt_item["residue_backbone_psi_angle"]))
+            wt_net_charge_list.append(float(wt_item["residue_net_charge"]))
+            wt_pka_list.append(float(wt_item["residue_pka"]))
+            wt_volume_list.append(float(wt_item["residue_volume"]))
+            wt_hydrophobicity_list.append(float(wt_item["residue_hydrophobicity"]))
+            wt_molecular_weight_list.append(float(wt_item["residue_molecular_weight"]))
+            wt_pi_list.append(float(wt_item["residue_isoelectric_point"]))
+            wt_residue_name_one_hot_list.append([float(x) for x in wt_item["residue_name_one_hot_encoding"]])
+            wt_residue_class_one_hot_list.append([float(x) for x in wt_item["residue_chemical_classification_one_hot_encoding"]])
+            wt_residue_ss_one_hot_list.append([float(x) for x in wt_item["residue_secondary_structure_one_hot_encoding"]])
 
         if mut_aaprops_lookup is not None:
             mut_item = mut_aaprops_lookup.get(mut_key)
             if mut_item is None:
-                logger.print(f"[ERROR] Missing MUT aa_props entry for mutation site: {pos} {mut_aa_actual}")
+                logger.print(f"[ERROR] Missing MUT amino_acid_residue_properties entry for mutation site: {pos} {mut_aa_actual}")
                 return None
-            mut_class_list.append(mut_item["aa_class"])
-            mut_ss_list.append(mut_item["aa_ss"])
-            mut_rsa_list.append(float(mut_item["aa_rsa"]))
-            mut_phi_list.append(float(mut_item["aa_phi"]))
-            mut_psi_list.append(float(mut_item["aa_psi"]))
-            mut_net_charge_list.append(float(mut_item["aa_net_charge"]))
-            mut_pka_list.append(float(mut_item["aa_pka"]))
-            mut_volume_list.append(float(mut_item["aa_volume"]))
-            mut_hydrophobicity_list.append(float(mut_item["aa_hydrophobicity"]))
-            mut_molecular_weight_list.append(float(mut_item["aa_molecular_weight"]))
-            mut_pi_list.append(float(mut_item["aa_pi"]))
-            mut_aa_name_one_hot_list.append([float(x) for x in mut_item["aa_name_one_hot"]])
-            mut_aa_class_one_hot_list.append([float(x) for x in mut_item["aa_class_one_hot"]])
-            mut_aa_ss_one_hot_list.append([float(x) for x in mut_item["aa_ss_one_hot"]])
+            mut_class_list.append(mut_item["residue_chemical_classification"])
+            mut_ss_list.append(mut_item["residue_secondary_structure"])
+            mut_rsa_list.append(float(mut_item["residue_relative_solvent_accessibility"]))
+            mut_phi_list.append(float(mut_item["residue_backbone_phi_angle"]))
+            mut_psi_list.append(float(mut_item["residue_backbone_psi_angle"]))
+            mut_net_charge_list.append(float(mut_item["residue_net_charge"]))
+            mut_pka_list.append(float(mut_item["residue_pka"]))
+            mut_volume_list.append(float(mut_item["residue_volume"]))
+            mut_hydrophobicity_list.append(float(mut_item["residue_hydrophobicity"]))
+            mut_molecular_weight_list.append(float(mut_item["residue_molecular_weight"]))
+            mut_pi_list.append(float(mut_item["residue_isoelectric_point"]))
+            mut_residue_name_one_hot_list.append([float(x) for x in mut_item["residue_name_one_hot_encoding"]])
+            mut_residue_class_one_hot_list.append([float(x) for x in mut_item["residue_chemical_classification_one_hot_encoding"]])
+            mut_residue_ss_one_hot_list.append([float(x) for x in mut_item["residue_secondary_structure_one_hot_encoding"]])
 
         if wt_flexibility_lookup is not None:
             wt_rmsf_item = wt_flexibility_lookup.get(wt_key)
             if wt_rmsf_item is None:
                 logger.print(f"[ERROR] Missing WT RMSF entry for mutation site: {pos} {wt_aa_actual}")
                 return None
-            wt_rmsf_list.append(float(wt_rmsf_item["rmsf"]))
+            wt_rmsf_list.append(float(wt_rmsf_item["residue_root_mean_square_fluctuation"]))
 
         if mut_flexibility_lookup is not None:
             mut_rmsf_item = mut_flexibility_lookup.get(mut_key)
             if mut_rmsf_item is None:
                 logger.print(f"[ERROR] Missing MUT RMSF entry for mutation site: {pos} {mut_aa_actual}")
                 return None
-            mut_rmsf_list.append(float(mut_rmsf_item["rmsf"]))
+            mut_rmsf_list.append(float(mut_rmsf_item["residue_root_mean_square_fluctuation"]))
 
         if wt_conservation_lookup is not None:
             wt_cons_item = wt_conservation_lookup.get(wt_key)
             if wt_cons_item is None:
                 logger.print(f"[ERROR] Missing WT conservation entry for mutation site: {pos} {wt_aa_actual}")
                 return None
-            wt_conservation_score_list.append(float(wt_cons_item["conservation_score"]))
+            wt_conservation_score_list.append(float(wt_cons_item["normalized_shannon_information_content"]))
 
         if mut_conservation_lookup is not None:
             mut_cons_item = mut_conservation_lookup.get(mut_key)
             if mut_cons_item is None:
                 logger.print(f"[ERROR] Missing MUT conservation entry for mutation site: {pos} {mut_aa_actual}")
                 return None
-            mut_conservation_score_list.append(float(mut_cons_item["conservation_score"]))
+            mut_conservation_score_list.append(float(mut_cons_item["normalized_shannon_information_content"]))
 
     if len(wt_name_list) > 0:
-        result["wt_aa_name"] = ",".join(wt_name_list)
+        result["wild_type_residue_name"] = ",".join(wt_name_list)
     if len(mut_name_list) > 0:
-        result["mut_aa_name"] = ",".join(mut_name_list)
+        result["mutant_residue_name"] = ",".join(mut_name_list)
 
     if len(wt_class_list) > 0:
-        result["wt_aa_class"] = ",".join(wt_class_list)
+        result["wild_type_residue_chemical_classification"] = ",".join(wt_class_list)
     if len(mut_class_list) > 0:
-        result["mut_aa_class"] = ",".join(mut_class_list)
+        result["mutant_residue_chemical_classification"] = ",".join(mut_class_list)
 
     if len(wt_ss_list) > 0:
-        result["wt_aa_ss"] = ",".join(wt_ss_list)
+        result["wild_type_residue_secondary_structure"] = ",".join(wt_ss_list)
     if len(mut_ss_list) > 0:
-        result["mut_aa_ss"] = ",".join(mut_ss_list)
+        result["mutant_residue_secondary_structure"] = ",".join(mut_ss_list)
 
-    _write_mutation_numeric_triplet(result, "aa_rsa", wt_rsa_list, mut_rsa_list)
-    _write_mutation_angle_triplet(result, "aa_phi", wt_phi_list, mut_phi_list)
-    _write_mutation_angle_triplet(result, "aa_psi", wt_psi_list, mut_psi_list)
-    _write_mutation_numeric_triplet(result, "aa_net_charge", wt_net_charge_list, mut_net_charge_list)
-    _write_mutation_numeric_triplet(result, "aa_pka", wt_pka_list, mut_pka_list)
-    _write_mutation_numeric_triplet(result, "aa_volume", wt_volume_list, mut_volume_list)
-    _write_mutation_numeric_triplet(result, "aa_hydrophobicity", wt_hydrophobicity_list, mut_hydrophobicity_list)
-    _write_mutation_numeric_triplet(result, "aa_molecular_weight", wt_molecular_weight_list, mut_molecular_weight_list)
-    _write_mutation_numeric_triplet(result, "aa_pi", wt_pi_list, mut_pi_list)
-    _write_mutation_numeric_triplet(result, "rmsf", wt_rmsf_list, mut_rmsf_list)
-    _write_mutation_numeric_triplet(result, "conservation_score", wt_conservation_score_list, mut_conservation_score_list)
+    _write_mutation_numeric_triplet(result, "residue_relative_solvent_accessibility", wt_rsa_list, mut_rsa_list)
+    _write_mutation_angle_triplet(result, "residue_backbone_phi_angle", wt_phi_list, mut_phi_list)
+    _write_mutation_angle_triplet(result, "residue_backbone_psi_angle", wt_psi_list, mut_psi_list)
+    _write_mutation_numeric_triplet(result, "residue_net_charge", wt_net_charge_list, mut_net_charge_list)
+    _write_mutation_numeric_triplet(result, "residue_pka", wt_pka_list, mut_pka_list)
+    _write_mutation_numeric_triplet(result, "residue_volume", wt_volume_list, mut_volume_list)
+    _write_mutation_numeric_triplet(result, "residue_hydrophobicity", wt_hydrophobicity_list, mut_hydrophobicity_list)
+    _write_mutation_numeric_triplet(result, "residue_molecular_weight", wt_molecular_weight_list, mut_molecular_weight_list)
+    _write_mutation_numeric_triplet(result, "residue_isoelectric_point", wt_pi_list, mut_pi_list)
+    _write_mutation_numeric_triplet(result, "residue_root_mean_square_fluctuation", wt_rmsf_list, mut_rmsf_list)
+    _write_mutation_numeric_triplet(result, "residue_sequence_conservation_score", wt_conservation_score_list, mut_conservation_score_list)
 
-    _write_mutation_vector_triplet(result, "aa_name_one_hot", wt_aa_name_one_hot_list, mut_aa_name_one_hot_list)
-    _write_mutation_vector_triplet(result, "aa_class_one_hot", wt_aa_class_one_hot_list, mut_aa_class_one_hot_list)
-    _write_mutation_vector_triplet(result, "aa_ss_one_hot", wt_aa_ss_one_hot_list, mut_aa_ss_one_hot_list)
+    _write_mutation_vector_triplet(result, "residue_name_one_hot_encoding", wt_residue_name_one_hot_list, mut_residue_name_one_hot_list)
+    _write_mutation_vector_triplet(result, "residue_chemical_classification_one_hot_encoding", wt_residue_class_one_hot_list, mut_residue_class_one_hot_list)
+    _write_mutation_vector_triplet(result, "residue_secondary_structure_one_hot_encoding", wt_residue_ss_one_hot_list, mut_residue_ss_one_hot_list)
 
     result = reorder_mutation_site_features(result)
 
@@ -511,34 +535,34 @@ def reorder_mut_overall_statistics(
     ordered: Dict[str, Any] = {}
 
     field_order = [
-        "aa_name_count",
-        "aa_class_count",
-        "aa_ss_count",
+        "residue_name_count",
+        "residue_chemical_classification_count",
+        "residue_secondary_structure_count",
         "hydrophobic_cluster_count",
         "max_hydrophobic_cluster_area",
         "total_hydrophobic_cluster_area",
-        "disorder_region_count",
-        "max_disorder_region_length",
-        "total_disorder_region_length",
-        "pocket_region_count",
-        "max_pocket_region_volume",
-        "total_pocket_region_volume",
+        "disordered_region_count",
+        "max_disordered_region_length",
+        "total_disordered_region_length",
+        "binding_pocket_count",
+        "max_binding_pocket_volume",
+        "total_binding_pocket_volume",
         "total_potential_energy",
-        "harmonic_bond_force",
-        "harmonic_angle_force",
-        "custom_bond_force",
-        "custom_torsion_force",
-        "custom_nonbonded_force",
-        "nonbonded_force",
-        "periodic_torsion_force",
-        "cmap_torsion_force",
-        "docking_score",
-        "hbond_count",
-        "ionic_count",
-        "vdw_count",
-        "pipistack_count",
-        "pication_count",
-        "ssbond_count",
+        "harmonic_bond_potential_energy",
+        "harmonic_angle_potential_energy",
+        "custom_bond_potential_energy",
+        "custom_torsion_potential_energy",
+        "custom_nonbonded_potential_energy",
+        "nonbonded_potential_energy",
+        "periodic_torsion_potential_energy",
+        "cmap_torsion_potential_energy",
+        "enzyme_substrate_binding_affinity",
+        "hydrogen_bond_count",
+        "ionic_bond_count",
+        "van_der_waals_contact_count",
+        "pi_pi_stacking_count",
+        "pi_cation_interaction_count",
+        "disulfide_bond_count",
     ]
 
     for field_name in field_order:
@@ -546,14 +570,14 @@ def reorder_mut_overall_statistics(
         mut_has = field_name in mut_stats
 
         if wt_has:
-            ordered[f"wt_{field_name}"] = wt_stats[field_name]
+            ordered[f"wild_type_{field_name}"] = wt_stats[field_name]
         if mut_has:
-            ordered[f"mut_{field_name}"] = mut_stats[field_name]
+            ordered[f"mutant_{field_name}"] = mut_stats[field_name]
 
         if wt_has and mut_has:
             diff_value = _diff_scalar_or_list(wt_stats[field_name], mut_stats[field_name])
             if diff_value is not None:
-                ordered[f"diff_{field_name}"] = diff_value
+                ordered[f"difference_{field_name}"] = diff_value
 
     return ordered
 
@@ -638,11 +662,11 @@ def _write_mutation_numeric_triplet(
     mut_mean = _mean_number_list(mut_list)
 
     if wt_mean is not None:
-        out[f"wt_{field_name}"] = wt_mean
+        out[f"wild_type_{field_name}"] = wt_mean
     if mut_mean is not None:
-        out[f"mut_{field_name}"] = mut_mean
+        out[f"mutant_{field_name}"] = mut_mean
     if wt_mean is not None and mut_mean is not None:
-        out[f"diff_{field_name}"] = mut_mean - wt_mean
+        out[f"difference_{field_name}"] = mut_mean - wt_mean
 
 
 def _write_mutation_angle_triplet(
@@ -655,11 +679,11 @@ def _write_mutation_angle_triplet(
     mut_mean = _circular_mean_deg(mut_list)
 
     if wt_mean is not None:
-        out[f"wt_{field_name}"] = wt_mean
+        out[f"wild_type_{field_name}"] = wt_mean
     if mut_mean is not None:
-        out[f"mut_{field_name}"] = mut_mean
+        out[f"mutant_{field_name}"] = mut_mean
     if wt_mean is not None and mut_mean is not None:
-        out[f"diff_{field_name}"] = _circular_diff_deg(wt_mean, mut_mean)
+        out[f"difference_{field_name}"] = _circular_diff_deg(wt_mean, mut_mean)
 
 
 def _write_mutation_vector_triplet(
@@ -672,8 +696,8 @@ def _write_mutation_vector_triplet(
     mut_mean = _mean_vector_list(mut_vector_list)
 
     if wt_mean is not None:
-        out[f"wt_{field_name}"] = wt_mean
+        out[f"wild_type_{field_name}"] = wt_mean
     if mut_mean is not None:
-        out[f"mut_{field_name}"] = mut_mean
+        out[f"mutant_{field_name}"] = mut_mean
     if wt_mean is not None and mut_mean is not None:
-        out[f"diff_{field_name}"] = [y - x for x, y in zip(wt_mean, mut_mean)]
+        out[f"difference_{field_name}"] = [y - x for x, y in zip(wt_mean, mut_mean)]

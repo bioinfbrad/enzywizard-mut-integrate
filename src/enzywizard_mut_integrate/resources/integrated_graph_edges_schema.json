@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EnzyWizard-Integrate Graph Edge Collection Schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "molecular_interaction": {
+        "type": "object",
+        "description": "The field 'molecular_interaction' indicates a molecular interaction ('molecular interaction': https://bioportal.bioontology.org/ontologies/MI) between the source node and the target node in the integrated graph ('graph': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/).",
+        "properties": {
+          "molecular_interaction_type": {
+            "type": "string",
+            "enum": [
+              "HBOND",
+              "IONIC",
+              "VDW",
+              "PIPISTACK",
+              "PICATION",
+              "SSBOND"
+            ],
+            "description": "The field 'molecular_interaction_type' indicates the type ('interaction type': http://purl.obolibrary.org/obo/MI_0190) of molecular interaction ('molecular interaction': https://bioportal.bioontology.org/ontologies/MI), using RING interaction codes ('RING interaction type': https://ring.biocomputingup.it/help/interactions): hydrogen bond ('hydrogen bond': https://goldbook.iupac.org/terms/view/H02899; value: HBOND), ionic bond ('ionic bond': https://goldbook.iupac.org/terms/view/IT07058; value: IONIC), van der Waals contact ('van der Waals forces': https://goldbook.iupac.org/terms/view/V06597; value: VDW), pi-pi stacking ('pi-pi stacking': https://goldbook.iupac.org/terms/view/13861; value: PIPISTACK), pi-cation interaction ('cation-pi interaction': https://goldbook.iupac.org/terms/view/08154; value: PICATION), and disulfide bond ('disulfide bond': https://www.uniprot.org/help/disulfid; value: SSBOND)."
+          },
+          "molecular_interaction_one_hot_encoding": {
+            "type": "array",
+            "description": "The field 'molecular_interaction_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the molecular interaction type ('interaction type': http://purl.obolibrary.org/obo/MI_0190).",
+            "items": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          "interaction_count": {
+            "type": "integer",
+            "description": "The field 'interaction_count' indicates the count ('count': http://purl.obolibrary.org/obo/STATO_0000047) of molecular interactions ('molecular interaction': https://bioportal.bioontology.org/ontologies/MI) between the source node and the target node."
+          }
+        },
+        "required": [
+          "molecular_interaction_type",
+          "molecular_interaction_one_hot_encoding",
+          "interaction_count"
+        ],
+        "additionalProperties": false
+      },
+      "source_node": {
+        "type": "object",
+        "description": "The field 'source_node' indicates the source node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node) in the integrated graph.",
+        "properties": {
+          "node_index": {
+            "type": "integer",
+            "description": "The field 'node_index' indicates the index ('index': http://purl.obolibrary.org/obo/NCIT_C25390) of the node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node) in the integrated graph ('graph': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/)."
+          }
+        },
+        "required": [
+          "node_index"
+        ],
+        "additionalProperties": false
+      },
+      "target_node": {
+        "type": "object",
+        "description": "The field 'target_node' indicates the target node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node) in the integrated graph.",
+        "properties": {
+          "node_index": {
+            "type": "integer",
+            "description": "The field 'node_index' indicates the index ('index': http://purl.obolibrary.org/obo/NCIT_C25390) of the node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node) in the integrated graph ('graph': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/)."
+          }
+        },
+        "required": [
+          "node_index"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "molecular_interaction",
+      "source_node",
+      "target_node"
+    ],
+    "additionalProperties": false
+  }
+}

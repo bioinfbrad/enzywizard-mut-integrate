@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EnzyWizard-Integrate Graph Node Collection Schema",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "type": "object",
+        "description": "This object indicates a residue node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node; 'residue': http://purl.obolibrary.org/obo/GENO_0000782) in the integrated graph ('graph': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/).",
+        "properties": {
+          "node_index": {
+            "type": "integer",
+            "description": "The field 'node_index' indicates the index ('index': http://purl.obolibrary.org/obo/NCIT_C25390) of the node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node) in the integrated graph ('graph': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/)."
+          },
+          "node_type": {
+            "type": "string",
+            "const": "residue",
+            "description": "The field 'node_type' indicates the type ('type': http://purl.org/dc/terms/type) of node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node), with value 'residue' indicating a residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "node_type_one_hot_encoding": {
+            "type": "array",
+            "description": "The field 'node_type_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the node type ('type': http://purl.org/dc/terms/type).",
+            "items": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          "residue_index": {
+            "type": "integer",
+            "description": "The field 'residue_index' indicates the index ('index': http://purl.obolibrary.org/obo/NCIT_C25390) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_name": {
+            "type": "string",
+            "pattern": "^[ACDEFGHIKLMNPQRSTVWY]$",
+            "description": "The field 'residue_name' indicates the name ('name': http://xmlns.com/foaf/0.1/name) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782), using one-letter code ('one-letter code': https://iupac.qmul.ac.uk/AminoAcid/A2021.html) to represent."
+          },
+          "residue_name_one_hot_encoding": {
+            "type": "array",
+            "description": "The field 'residue_name_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the residue name ('residue': http://purl.obolibrary.org/obo/GENO_0000782; 'name': http://xmlns.com/foaf/0.1/name).",
+            "items": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          "residue_alpha_carbon_coordinate": {
+            "type": "array",
+            "description": "The field 'residue_alpha_carbon_coordinate' indicates the three-dimensional coordinate ('coordinate': http://purl.obolibrary.org/obo/NCIT_C44477) of the alpha carbon atom ('alpha carbon': https://www.rcsb.org/docs/general-help/glossary; 'atom': http://purl.obolibrary.org/obo/CHMO_0001075) in the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782).",
+            "items": {
+              "type": "number"
+            }
+          },
+          "residue_chemical_classification": {
+            "type": "string",
+            "pattern": "^(uncharged_polar|positively_charged|negatively_charged|hydrophobic|aromatic|aliphatic|heterocyclic|sulfur_containing)(/(uncharged_polar|positively_charged|negatively_charged|hydrophobic|aromatic|aliphatic|heterocyclic|sulfur_containing))*$",
+            "description": "The field 'residue_chemical_classification' indicates the chemical classification ('classification': http://purl.obolibrary.org/obo/NCIT_C25161) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_chemical_classification_one_hot_encoding": {
+            "type": "array",
+            "description": "The field 'residue_chemical_classification_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the chemical classification ('classification': http://purl.obolibrary.org/obo/NCIT_C25161) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782).",
+            "items": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          "residue_secondary_structure": {
+            "type": "string",
+            "enum": [
+              "-",
+              "H",
+              "B",
+              "E",
+              "G",
+              "I",
+              "T",
+              "S"
+            ],
+            "description": "The field 'residue_secondary_structure' indicates the secondary structure ('secondary structure': http://edamontology.org/operation_1847) assigned to the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782), using DSSP secondary-structure codes ('DSSP': https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html)."
+          },
+          "residue_secondary_structure_one_hot_encoding": {
+            "type": "array",
+            "description": "The field 'residue_secondary_structure_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the residue secondary structure ('secondary structure': http://edamontology.org/operation_1847).",
+            "items": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          "residue_relative_solvent_accessibility": {
+            "type": "number",
+            "description": "The field 'residue_relative_solvent_accessibility' indicates the relative solvent accessibility ('solvent accessibility': http://edamontology.org/data_1542) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_backbone_phi_angle": {
+            "type": "number",
+            "description": "The field 'residue_backbone_phi_angle' indicates the backbone phi torsion angle ('torsion angle': https://goldbook.iupac.org/terms/view/T06406) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) in the protein backbone ('protein backbone': http://edamontology.org/operation_1825)."
+          },
+          "residue_backbone_psi_angle": {
+            "type": "number",
+            "description": "The field 'residue_backbone_psi_angle' indicates the backbone psi torsion angle ('torsion angle': https://goldbook.iupac.org/terms/view/T06406) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) in the protein backbone ('protein backbone': http://edamontology.org/operation_1825)."
+          },
+          "residue_net_charge": {
+            "type": "number",
+            "description": "The field 'residue_net_charge' indicates the net electric charge ('net electric charge': https://goldbook.iupac.org/terms/view/N04111) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_pka": {
+            "type": "number",
+            "description": "The field 'residue_pka' indicates the pKa value ('pKa': https://goldbook.iupac.org/terms/view/15441) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_volume": {
+            "type": "number",
+            "description": "The field 'residue_volume' indicates the volume ('volume': http://purl.obolibrary.org/obo/PATO_0000918) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_hydrophobicity": {
+            "type": "number",
+            "description": "The field 'residue_hydrophobicity' indicates the hydrophobicity ('hydrophobicity': https://goldbook.iupac.org/terms/view/HT06964) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_molecular_weight": {
+            "type": "number",
+            "description": "The field 'residue_molecular_weight' indicates the molecular weight ('molecular weight': https://goldbook.iupac.org/terms/view/R05271) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_isoelectric_point": {
+            "type": "number",
+            "description": "The field 'residue_isoelectric_point' indicates the isoelectric point ('isoelectric point': https://goldbook.iupac.org/terms/view/I03275) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_root_mean_square_fluctuation": {
+            "type": "number",
+            "description": "The field 'residue_root_mean_square_fluctuation' indicates the root mean square fluctuation ('root mean square fluctuation': https://manual.gromacs.org/current/onlinehelp/gmx-rmsf.html) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_sequence_conservation_score": {
+            "type": "number",
+            "description": "The field 'residue_sequence_conservation_score' indicates the sequence conservation score ('sequence conservation': http://edamontology.org/operation_0448; 'score': http://edamontology.org/data_1772) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+          },
+          "residue_embedding": {
+            "type": "array",
+            "description": "The field 'residue_embedding' indicates the embedding ('embedding': https://developers.google.com/machine-learning/crash-course/embeddings) generated by the ESM-2 protein language model ('ESM-2': https://docs.nvidia.com/bionemo-framework/2.0/models/esm2/; 'protein language model': https://synbiointel.com/glossary/protein-language-model/) for the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782), represented as a numerical vector ('numerical vector': https://mathworld.wolfram.com/Vector.html).",
+            "items": {
+              "type": "number"
+            }
+          },
+          "is_in_hydrophobic_cluster": {
+            "type": "boolean",
+            "description": "The field 'is_in_hydrophobic_cluster' indicates whether the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) is included in a hydrophobic cluster ('hydrophobic cluster': https://proteintools.uni-bayreuth.de/clusters/)."
+          },
+          "is_in_disordered_region": {
+            "type": "boolean",
+            "description": "The field 'is_in_disordered_region' indicates whether the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) is included in an intrinsically disordered region ('intrinsically disordered region': https://disprot.org/ontology)."
+          },
+          "is_in_binding_pocket": {
+            "type": "boolean",
+            "description": "The field 'is_in_binding_pocket' indicates whether the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) is included in a binding pocket ('binding pocket': https://schlessinger-lab.github.io/pyvol/index.html)."
+          }
+        },
+        "required": [
+          "node_index",
+          "node_type",
+          "node_type_one_hot_encoding",
+          "residue_index",
+          "residue_name",
+          "residue_name_one_hot_encoding",
+          "residue_alpha_carbon_coordinate",
+          "residue_chemical_classification",
+          "residue_chemical_classification_one_hot_encoding",
+          "residue_secondary_structure",
+          "residue_secondary_structure_one_hot_encoding",
+          "residue_relative_solvent_accessibility",
+          "residue_backbone_phi_angle",
+          "residue_backbone_psi_angle",
+          "residue_net_charge",
+          "residue_pka",
+          "residue_volume",
+          "residue_hydrophobicity",
+          "residue_molecular_weight",
+          "residue_isoelectric_point",
+          "residue_root_mean_square_fluctuation",
+          "residue_sequence_conservation_score",
+          "residue_embedding",
+          "is_in_hydrophobic_cluster",
+          "is_in_disordered_region",
+          "is_in_binding_pocket"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "description": "This object indicates a substrate node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node; 'substrate': https://purl.dsmz.de/schema/Substrate) in the integrated graph ('graph': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/).",
+        "properties": {
+          "node_index": {
+            "type": "integer",
+            "description": "The field 'node_index' indicates the index ('index': http://purl.obolibrary.org/obo/NCIT_C25390) of the node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node) in the integrated graph ('graph': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/)."
+          },
+          "node_type": {
+            "type": "string",
+            "const": "substrate",
+            "description": "The field 'node_type' indicates the type ('type': http://purl.org/dc/terms/type) of node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node), with value 'substrate' indicating a substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+          },
+          "node_type_one_hot_encoding": {
+            "type": "array",
+            "description": "The field 'node_type_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the node type ('type': http://purl.org/dc/terms/type).",
+            "items": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          "substrate_index": {
+            "type": "integer",
+            "description": "The field 'substrate_index' indicates the index ('index': http://purl.obolibrary.org/obo/NCIT_C25390) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+          },
+          "substrate_name": {
+            "type": "string",
+            "description": "The field 'substrate_name' indicates the name ('name': http://xmlns.com/foaf/0.1/name) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+          },
+          "substrate_smiles": {
+            "type": "string",
+            "description": "The field 'substrate_smiles' indicates the SMILES representation ('SMILES': https://opensmiles.org/opensmiles.html) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+          },
+          "substrate_atom_count": {
+            "type": "integer",
+            "description": "The field 'substrate_atom_count' indicates the count ('count': http://purl.obolibrary.org/obo/STATO_0000047) of atoms ('atom': https://goldbook.iupac.org/terms/view/A00493) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+          },
+          "substrate_molecular_weight": {
+            "type": "number",
+            "description": "The field 'substrate_molecular_weight' indicates the molecular weight ('molecular weight': https://goldbook.iupac.org/terms/view/R05271) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+          },
+          "substrate_logp": {
+            "type": "number",
+            "description": "The field 'substrate_logp' indicates the calculated logP value ('LogP': https://doktormike.gitlab.io/posts/navigating-logp-logd-pka-and-logs-a-physicists-guide/) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+          },
+          "docked_substrate_center_coordinate": {
+            "type": "array",
+            "description": "The field 'docked_substrate_center_coordinate' indicates the center coordinate ('coordinate': https://mathworld.wolfram.com/Coordinates.html) of the docked substrate ('substrate': https://purl.dsmz.de/schema/Substrate) in the enzyme-substrate complex ('enzyme': https://purl.dsmz.de/schema/Enzyme; 'substrate': https://purl.dsmz.de/schema/Substrate; 'complex': https://goldbook.iupac.org/terms/view/C01203).",
+            "items": {
+              "type": "number"
+            }
+          },
+          "substrate_fingerprint_encoding": {
+            "type": "array",
+            "description": "The field 'substrate_fingerprint_encoding' indicates the molecular fingerprint encoding ('molecular fingerprint': https://www.rdkit.org/docs/GettingStartedInPython.html#fingerprinting-and-molecular-similarity) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html).",
+            "items": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          }
+        },
+        "required": [
+          "node_index",
+          "node_type",
+          "node_type_one_hot_encoding",
+          "substrate_index",
+          "substrate_name",
+          "substrate_smiles",
+          "substrate_atom_count",
+          "substrate_molecular_weight",
+          "substrate_logp",
+          "docked_substrate_center_coordinate",
+          "substrate_fingerprint_encoding"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}

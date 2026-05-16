@@ -98,46 +98,46 @@ def extract_wt_mut_protein_names_from_mutclean_report_path(
 
 
 def get_mut_integrate_supported_output_type(data: Dict[str, Any], logger: Logger) -> str | None:
-    output_type = data.get("output_type")
-    if not isinstance(output_type, str):
-        logger.print("[ERROR] Missing or invalid output_type.")
+    report_type = data.get("report_type")
+    if not isinstance(report_type, str):
+        logger.print("[ERROR] Missing or invalid report_type.")
         return None
-    if output_type not in MUT_INTEGRATE_SUPPORTED_OUTPUT_TYPES:
-        logger.print(f"[ERROR] Unsupported output_type for mut_integrate: {output_type}")
+    if report_type not in MUT_INTEGRATE_SUPPORTED_OUTPUT_TYPES:
+        logger.print(f"[ERROR] Unsupported report_type for mut_integrate: {report_type}")
         return None
-    return output_type
+    return report_type
 
 
 def validate_mut_integrate_report_by_type(data: Dict[str, Any], logger: Logger) -> bool:
-    output_type = get_mut_integrate_supported_output_type(data, logger)
-    if output_type is None:
+    report_type = get_mut_integrate_supported_output_type(data, logger)
+    if report_type is None:
         return False
 
-    if output_type == "enzywizard_mut_clean":
+    if report_type == "enzywizard_mut_clean":
         return validate_mutclean_report(data, logger)
-    if output_type == "enzywizard_clean":
+    if report_type == "enzywizard_clean":
         return validate_clean_report(data, logger)
-    if output_type == "enzywizard_aaprops":
+    if report_type == "enzywizard_aaprops":
         return validate_aaprops_report(data, logger)
-    if output_type == "enzywizard_hydrocluster":
+    if report_type == "enzywizard_hydrocluster":
         return validate_hydrocluster_report(data, logger)
-    if output_type == "enzywizard_energy":
+    if report_type == "enzywizard_energy":
         return validate_energy_report(data, logger)
-    if output_type == "enzywizard_flexibility":
+    if report_type == "enzywizard_flexibility":
         return validate_flexibility_report(data, logger)
-    if output_type == "enzywizard_disorder":
+    if report_type == "enzywizard_disorder":
         return validate_disorder_report(data, logger)
-    if output_type == "enzywizard_conservation":
+    if report_type == "enzywizard_conservation":
         return validate_conservation_report(data, logger)
-    if output_type == "enzywizard_embedding":
+    if report_type == "enzywizard_embedding":
         return validate_embedding_report(data, logger)
-    if output_type == "enzywizard_pocket":
+    if report_type == "enzywizard_pocket":
         return validate_pocket_report(data, logger)
-    if output_type == "enzywizard_substrate":
+    if report_type == "enzywizard_substrate":
         return validate_substrate_report(data, logger)
-    if output_type == "enzywizard_dock":
+    if report_type == "enzywizard_dock":
         return validate_dock_report(data, logger)
-    if output_type == "enzywizard_interaction":
+    if report_type == "enzywizard_interaction":
         return validate_interaction_report(data, logger)
 
     logger.print("[ERROR] Unsupported report type.")
@@ -145,16 +145,16 @@ def validate_mut_integrate_report_by_type(data: Dict[str, Any], logger: Logger) 
 
 
 def validate_mutclean_report(data: Dict[str, Any], logger: Logger) -> bool:
-    if data.get("output_type") != "enzywizard_mut_clean":
-        logger.print("[ERROR] mut_clean report output_type mismatch.")
+    if data.get("report_type") != "enzywizard_mut_clean":
+        logger.print("[ERROR] mut_clean report report_type mismatch.")
         return False
 
     amino_acid_substitution = data.get("amino_acid_substitution")
     cleaned_amino_acid_substitution = data.get("cleaned_amino_acid_substitution")
-    wt_mapping = data.get("wt_amino_acid_mapping_old_to_new")
-    wt_stats = data.get("wt_clean_statistics")
-    mut_mapping = data.get("mut_amino_acid_mapping_old_to_new")
-    mut_stats = data.get("mut_clean_statistics")
+    wt_mapping = data.get("wild_type_residue_mapping_old_to_new")
+    wt_stats = data.get("wild_type_clean_statistics")
+    mut_mapping = data.get("mutant_residue_mapping_old_to_new")
+    mut_stats = data.get("mutant_clean_statistics")
 
     if not isinstance(amino_acid_substitution, str) or amino_acid_substitution.strip() == "":
         logger.print("[ERROR] Invalid amino_acid_substitution in mut_clean report.")
@@ -165,39 +165,39 @@ def validate_mutclean_report(data: Dict[str, Any], logger: Logger) -> bool:
         return False
 
     if not isinstance(wt_mapping, list):
-        logger.print("[ERROR] Invalid wt_amino_acid_mapping_old_to_new.")
+        logger.print("[ERROR] Invalid wild_type_residue_mapping_old_to_new.")
         return False
 
     if not isinstance(mut_mapping, list):
-        logger.print("[ERROR] Invalid mut_amino_acid_mapping_old_to_new.")
+        logger.print("[ERROR] Invalid mutant_residue_mapping_old_to_new.")
         return False
 
     if not isinstance(wt_stats, dict):
-        logger.print("[ERROR] Invalid wt_clean_statistics.")
+        logger.print("[ERROR] Invalid wild_type_clean_statistics.")
         return False
 
     if not isinstance(mut_stats, dict):
-        logger.print("[ERROR] Invalid mut_clean_statistics.")
+        logger.print("[ERROR] Invalid mutant_clean_statistics.")
         return False
 
     required_stat_keys = [
-        "removed_heterogen",
-        "changed_resname",
-        "fixed_residues",
-        "added_heavy_atoms",
-        "added_hydrogen_atoms",
-        "kept_residues",
+        "removed_heterogen_count",
+        "standardized_residue_name_count",
+        "repaired_residue_count",
+        "added_heavy_atom_count",
+        "added_hydrogen_atom_count",
+        "retained_residue_count",
     ]
 
-    for stats, stats_name in [(wt_stats, "wt_clean_statistics"), (mut_stats, "mut_clean_statistics")]:
+    for stats, stats_name in [(wt_stats, "wild_type_clean_statistics"), (mut_stats, "mutant_clean_statistics")]:
         for k in required_stat_keys:
             if not isinstance(stats.get(k), int):
                 logger.print(f"[ERROR] Invalid {stats_name} field: {k}")
                 return False
 
     for mapping, mapping_name in [
-        (wt_mapping, "wt_amino_acid_mapping_old_to_new"),
-        (mut_mapping, "mut_amino_acid_mapping_old_to_new"),
+        (wt_mapping, "wild_type_residue_mapping_old_to_new"),
+        (mut_mapping, "mutant_residue_mapping_old_to_new"),
     ]:
         for item in mapping:
             if not isinstance(item, dict):
@@ -212,11 +212,11 @@ def validate_mutclean_report(data: Dict[str, Any], logger: Logger) -> bool:
                 return False
 
             for residue_item in [old_residue, new_residue]:
-                if not isinstance(residue_item.get("aa_id"), int):
-                    logger.print(f"[ERROR] Invalid aa_id in {mapping_name}.")
+                if not isinstance(residue_item.get("residue_index"), int):
+                    logger.print(f"[ERROR] Invalid residue_index in {mapping_name}.")
                     return False
-                if not isinstance(residue_item.get("aa_name"), str) or residue_item["aa_name"].strip() == "":
-                    logger.print(f"[ERROR] Invalid aa_name in {mapping_name}.")
+                if not isinstance(residue_item.get("residue_name"), str) or residue_item["residue_name"].strip() == "":
+                    logger.print(f"[ERROR] Invalid residue_name in {mapping_name}.")
                     return False
                 if not isinstance(residue_item.get("hydrogen_atom_count"), int):
                     logger.print(f"[ERROR] Invalid hydrogen_atom_count in {mapping_name}.")
@@ -235,11 +235,11 @@ def synthesize_clean_report_from_mutclean(
         return None
 
     if side == "wt":
-        mapping = mutclean_report.get("wt_amino_acid_mapping_old_to_new")
-        stats = mutclean_report.get("wt_clean_statistics")
+        mapping = mutclean_report.get("wild_type_residue_mapping_old_to_new")
+        stats = mutclean_report.get("wild_type_clean_statistics")
     elif side == "mut":
-        mapping = mutclean_report.get("mut_amino_acid_mapping_old_to_new")
-        stats = mutclean_report.get("mut_clean_statistics")
+        mapping = mutclean_report.get("mutant_residue_mapping_old_to_new")
+        stats = mutclean_report.get("mutant_clean_statistics")
     else:
         logger.print("[ERROR] side must be 'wt' or 'mut'.")
         return None
@@ -253,8 +253,8 @@ def synthesize_clean_report_from_mutclean(
         return None
 
     clean_report = {
-        "output_type": "enzywizard_clean",
-        "amino_acid_mapping_old_to_new": mapping,
+        "report_type": "enzywizard_clean",
+        "residue_mapping_old_to_new": mapping,
         "clean_statistics": stats,
     }
 

@@ -9,7 +9,7 @@ from ..utils.sequence_utils import normalize_aa_name_to_one_letter
 
 def generate_integrate_report(overall_statistics: Dict[str, Any],integrated_graph: List[Dict[str, Any]]) -> Dict[str, Any]:
     return {
-        "output_type": "enzywizard_integrate",
+        "report_type": "enzywizard_integrate",
         "overall_statistics": overall_statistics,
         "integrated_graph": integrated_graph,
     }
@@ -82,47 +82,59 @@ def build_overall_statistics(report_dict: Dict[str, Dict[str, Any]],strict: bool
         return overall_statistics
 
     if aaprops_report is not None:
-        stats = aaprops_report.get("aa_props_statistics", {})
-        aa_name_count = aa_name_statistics_to_list(stats.get("aa_name_statistics"), logger)
-        if aa_name_count is None:
-            return None
-        aa_class_count = aa_class_statistics_to_list(stats.get("aa_class_statistics"), logger)
-        if aa_class_count is None:
-            return None
-        aa_ss_count = aa_ss_statistics_to_list(stats.get("aa_ss_statistics"), logger)
-        if aa_ss_count is None:
+        stats = aaprops_report.get("residue_properties_statistics", {})
+
+        residue_name_count = aa_name_statistics_to_list(
+            stats.get("residue_name_statistics"),
+            logger,
+        )
+        if residue_name_count is None:
             return None
 
-        overall_statistics["aa_name_count"] = aa_name_count
-        overall_statistics["aa_class_count"] = aa_class_count
-        overall_statistics["aa_ss_count"] = aa_ss_count
+        residue_class_count = aa_class_statistics_to_list(
+            stats.get("residue_chemical_classification_statistics"),
+            logger,
+        )
+        if residue_class_count is None:
+            return None
+
+        residue_ss_count = aa_ss_statistics_to_list(
+            stats.get("residue_secondary_structure_statistics"),
+            logger,
+        )
+        if residue_ss_count is None:
+            return None
+
+        overall_statistics["residue_name_count"] = residue_name_count
+        overall_statistics["residue_chemical_classification_count"] = residue_class_count
+        overall_statistics["residue_secondary_structure_count"] = residue_ss_count
     elif strict:
         logger.print("[ERROR] enzywizard_aaprops is required in strict mode.")
         return None
 
     if hydro_report is not None:
         hydro_stats = hydro_report.get("hydrophobic_cluster_statistics", {})
-        overall_statistics["hydrophobic_cluster_count"] = hydro_stats["cluster_num"]
-        overall_statistics["max_hydrophobic_cluster_area"] = hydro_stats["max_cluster_area"]
-        overall_statistics["total_hydrophobic_cluster_area"] = hydro_stats["total_cluster_area"]
+        overall_statistics["hydrophobic_cluster_count"] = hydro_stats["hydrophobic_cluster_count"]
+        overall_statistics["max_hydrophobic_cluster_area"] = hydro_stats["max_hydrophobic_cluster_area"]
+        overall_statistics["total_hydrophobic_cluster_area"] = hydro_stats["total_hydrophobic_cluster_area"]
     elif strict:
         logger.print("[ERROR] enzywizard_hydrocluster is required in strict mode.")
         return None
 
     if disorder_report is not None:
-        disorder_stats = disorder_report.get("disorder_region_statistics", {})
-        overall_statistics["disorder_region_count"] = disorder_stats["region_num"]
-        overall_statistics["max_disorder_region_length"] = disorder_stats["max_region_length"]
-        overall_statistics["total_disorder_region_length"] = disorder_stats["total_region_length"]
+        disorder_stats = disorder_report.get("disordered_region_statistics", {})
+        overall_statistics["disordered_region_count"] = disorder_stats["disordered_region_count"]
+        overall_statistics["max_disordered_region_length"] = disorder_stats["max_disordered_region_length"]
+        overall_statistics["total_disordered_region_length"] = disorder_stats["total_disordered_region_length"]
     elif strict:
         logger.print("[ERROR] enzywizard_disorder is required in strict mode.")
         return None
 
     if pocket_report is not None:
-        pocket_stats = pocket_report.get("pocket_region_statistics", {})
-        overall_statistics["pocket_region_count"] = pocket_stats["pocket_num"]
-        overall_statistics["max_pocket_region_volume"] = pocket_stats["max_pocket_volume"]
-        overall_statistics["total_pocket_region_volume"] = pocket_stats["total_pocket_volume"]
+        pocket_stats = pocket_report.get("binding_pocket_statistics", {})
+        overall_statistics["binding_pocket_count"] = pocket_stats["binding_pocket_count"]
+        overall_statistics["max_binding_pocket_volume"] = pocket_stats["max_binding_pocket_volume"]
+        overall_statistics["total_binding_pocket_volume"] = pocket_stats["total_binding_pocket_volume"]
     elif strict:
         logger.print("[ERROR] enzywizard_pocket is required in strict mode.")
         return None
@@ -130,32 +142,33 @@ def build_overall_statistics(report_dict: Dict[str, Dict[str, Any]],strict: bool
     if energy_report is not None:
         energy_terms = energy_report.get("energy_terms", {})
         overall_statistics["total_potential_energy"] = energy_terms["total_potential_energy"]
-        overall_statistics["harmonic_bond_force"] = energy_terms["harmonic_bond_force"]
-        overall_statistics["harmonic_angle_force"] = energy_terms["harmonic_angle_force"]
-        overall_statistics["custom_bond_force"] = energy_terms["custom_bond_force"]
-        overall_statistics["custom_torsion_force"] = energy_terms["custom_torsion_force"]
-        overall_statistics["custom_nonbonded_force"] = energy_terms["custom_nonbonded_force"]
-        overall_statistics["nonbonded_force"] = energy_terms["nonbonded_force"]
-        overall_statistics["periodic_torsion_force"] = energy_terms["periodic_torsion_force"]
-        overall_statistics["cmap_torsion_force"] = energy_terms["cmap_torsion_force"]
+        overall_statistics["harmonic_bond_potential_energy"] = energy_terms["harmonic_bond_potential_energy"]
+        overall_statistics["harmonic_angle_potential_energy"] = energy_terms["harmonic_angle_potential_energy"]
+        overall_statistics["custom_bond_potential_energy"] = energy_terms["custom_bond_potential_energy"]
+        overall_statistics["custom_torsion_potential_energy"] = energy_terms["custom_torsion_potential_energy"]
+        overall_statistics["custom_nonbonded_potential_energy"] = energy_terms["custom_nonbonded_potential_energy"]
+        overall_statistics["nonbonded_potential_energy"] = energy_terms["nonbonded_potential_energy"]
+        overall_statistics["periodic_torsion_potential_energy"] = energy_terms["periodic_torsion_potential_energy"]
+        overall_statistics["cmap_torsion_potential_energy"] = energy_terms["cmap_torsion_potential_energy"]
     elif strict:
         logger.print("[ERROR] enzywizard_energy is required in strict mode.")
         return None
 
     if dock_report is not None:
-        overall_statistics["docking_score"] = dock_report["docked_result"]["docking_score"]
+        overall_statistics["enzyme_substrate_binding_affinity"] = dock_report["enzyme_substrate_docking_result"]["enzyme_substrate_binding_affinity"]
     elif strict:
         logger.print("[ERROR] enzywizard_dock is required in strict mode.")
         return None
 
     if interaction_report is not None:
-        count_block = interaction_report["interactions_statistics"]["overall"]["count"]
-        overall_statistics["hbond_count"] = count_block["HBOND"]
-        overall_statistics["ionic_count"] = count_block["IONIC"]
-        overall_statistics["vdw_count"] = count_block["VDW"]
-        overall_statistics["pipistack_count"] = count_block["PIPISTACK"]
-        overall_statistics["pication_count"] = count_block["PICATION"]
-        overall_statistics["ssbond_count"] = count_block["SSBOND"]
+        count_block = interaction_report["molecular_interaction_statistics"]["overall_molecular_interaction_statistics"]["interaction_count"]
+
+        overall_statistics["hydrogen_bond_count"] = count_block["hydrogen_bond_count"]
+        overall_statistics["ionic_bond_count"] = count_block["ionic_bond_count"]
+        overall_statistics["van_der_waals_contact_count"] = count_block["van_der_waals_contact_count"]
+        overall_statistics["pi_pi_stacking_count"] = count_block["pi_pi_stacking_count"]
+        overall_statistics["pi_cation_interaction_count"] = count_block["pi_cation_interaction_count"]
+        overall_statistics["disulfide_bond_count"] = count_block["disulfide_bond_count"]
     elif strict:
         logger.print("[ERROR] enzywizard_interaction is required in strict mode.")
         return None
@@ -171,23 +184,23 @@ def build_integrated_graph(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
             return None
         return []
 
-    interactions = interaction_report.get("interactions")
+    interactions = interaction_report.get("molecular_interactions")
     if not isinstance(interactions, list):
-        logger.print("[ERROR] interactions must be a list.")
+        logger.print("[ERROR] molecular_interactions must be a list.")
         return None
 
-    amino_acid_node_list = build_amino_acid_nodes(report_dict, strict, logger)
-    if amino_acid_node_list is None:
+    residue_node_list = build_residue_nodes(report_dict, strict, logger)
+    if residue_node_list is None:
         return None
 
     substrate_node_list = build_substrate_nodes(report_dict, strict, logger)
     if substrate_node_list is None:
         return None
 
-    all_node_list = amino_acid_node_list + substrate_node_list
+    all_node_list = residue_node_list + substrate_node_list
 
     for i, node in enumerate(all_node_list, start=1):
-        node["node_id"] = i
+        node["node_index"] = i
 
     node_lookup = build_integrated_node_lookup(all_node_list, logger)
     if node_lookup is None:
@@ -197,29 +210,29 @@ def build_integrated_graph(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
     if edge_entry_list is None:
         return None
 
-    connected_node_id_set = set()
+    connected_node_index_set = set()
     for edge_entry in edge_entry_list:
-        node_1 = edge_entry.get("node_1")
-        node_2 = edge_entry.get("node_2")
+        source_node = edge_entry.get("source_node")
+        target_node = edge_entry.get("target_node")
 
-        if not isinstance(node_1, dict) or not isinstance(node_2, dict):
+        if not isinstance(source_node, dict) or not isinstance(target_node, dict):
             logger.print("[ERROR] Invalid edge entry while collecting connected nodes.")
             return None
 
-        connected_node_id_set.add(node_1["node_id"])
-        connected_node_id_set.add(node_2["node_id"])
+        connected_node_index_set.add(source_node["node_index"])
+        connected_node_index_set.add(target_node["node_index"])
 
     isolated_node_entry_list: List[Dict[str, Any]] = []
     for node in all_node_list:
-        if node["node_id"] not in connected_node_id_set:
+        if node["node_index"] not in connected_node_index_set:
             isolated_node_entry_list.append({
-                "node_1": node
+                "isolated_node": node
             })
 
     return edge_entry_list + isolated_node_entry_list
 
 
-def build_amino_acid_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,logger: Logger,) -> List[Dict[str, Any]] | None:
+def build_residue_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,logger: Logger,) -> List[Dict[str, Any]] | None:
     clean_report = report_dict.get("enzywizard_clean")
     if clean_report is None:
         logger.print("[ERROR] Missing clean report.")
@@ -239,7 +252,7 @@ def build_amino_acid_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
 
     aaprops_lookup = None
     if aaprops_report is not None:
-        aaprops_lookup = build_lookup_by_residue(aaprops_report["aa_props"], "aa_id", "aa_name", logger)
+        aaprops_lookup = build_lookup_by_residue(aaprops_report["amino_acid_residue_properties"],"residue_index","residue_name",logger)
         if aaprops_lookup is None:
             return None
     elif strict:
@@ -248,7 +261,7 @@ def build_amino_acid_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
 
     flexibility_lookup = None
     if flexibility_report is not None:
-        flexibility_lookup = build_lookup_by_residue(flexibility_report["protein_rmsf"], "aa_id", "aa_name", logger)
+        flexibility_lookup = build_lookup_by_residue(flexibility_report["protein_flexibility"],"residue_index","residue_name",logger)
         if flexibility_lookup is None:
             return None
     elif strict:
@@ -257,7 +270,7 @@ def build_amino_acid_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
 
     conservation_lookup = None
     if conservation_report is not None:
-        conservation_lookup = build_lookup_by_residue(conservation_report["conservation_scores"], "aa_id", "aa_name", logger)
+        conservation_lookup = build_lookup_by_residue(conservation_report["sequence_conservation_scores"],"residue_index","residue_name",logger)
         if conservation_lookup is None:
             return None
     elif strict:
@@ -266,7 +279,7 @@ def build_amino_acid_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
 
     embedding_lookup = None
     if embedding_report is not None:
-        embedding_lookup = build_lookup_by_residue(embedding_report["embeddings"], "aa_id", "aa_name", logger)
+        embedding_lookup = build_lookup_by_residue(embedding_report["sequence_embeddings"],"residue_index","residue_name",logger)
         if embedding_lookup is None:
             return None
     elif strict:
@@ -303,43 +316,43 @@ def build_amino_acid_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
     node_list: List[Dict[str, Any]] = []
 
     for residue in clean_residue_list:
-        aa_index = residue["aa_id"]
-        aa_name = normalize_aa_name_to_one_letter(residue["aa_name"])
-        key = residue_key(aa_index, aa_name)
+        residue_index = residue["residue_index"]
+        residue_name = normalize_aa_name_to_one_letter(residue["residue_name"])
+        key = residue_key(residue_index, residue_name)
 
         drop_node = False
 
         node: Dict[str, Any] = {}
-        node["node_id"] = 0
-        node["node_type"] = "amino_acid"
-        node["node_type_one_hot"] = node_type_one_hot("amino_acid")
-        node["aa_index"] = aa_index
-        node["aa_name"] = aa_name
+        node["node_index"] = 0
+        node["node_type"] = "residue"
+        node["node_type_one_hot_encoding"] = node_type_one_hot("residue")
+        node["residue_index"] = residue_index
+        node["residue_name"] = residue_name
 
         if aaprops_lookup is not None:
             aa_item = aaprops_lookup.get(key)
             if aa_item is None:
                 if strict:
-                    logger.print(f"[ERROR] Missing aa_props entry for residue {aa_index} {aa_name}.")
+                    logger.print(f"[ERROR] Missing amino_acid_residue_properties entry for residue {residue_index} {residue_name}.")
                     return None
-                logger.print(f"[WARNING] Missing aa_props entry for residue {aa_index} {aa_name}. Node dropped.")
+                logger.print(f"[WARNING] Missing amino_acid_residue_properties entry for residue {residue_index} {residue_name}. Node dropped.")
                 drop_node = True
             else:
-                node["aa_coord"] = aa_item["aa_coord"]
-                node["aa_class"] = aa_item["aa_class"]
-                node["aa_ss"] = aa_item["aa_ss"]
-                node["aa_rsa"] = aa_item["aa_rsa"]
-                node["aa_phi"] = aa_item["aa_phi"]
-                node["aa_psi"] = aa_item["aa_psi"]
-                node["aa_net_charge"] = aa_item["aa_net_charge"]
-                node["aa_pka"] = aa_item["aa_pka"]
-                node["aa_volume"] = aa_item["aa_volume"]
-                node["aa_hydrophobicity"] = aa_item["aa_hydrophobicity"]
-                node["aa_molecular_weight"] = aa_item["aa_molecular_weight"]
-                node["aa_pi"] = aa_item["aa_pi"]
-                node["aa_name_one_hot"] = aa_item["aa_name_one_hot"]
-                node["aa_class_one_hot"] = aa_item["aa_class_one_hot"]
-                node["aa_ss_one_hot"] = aa_item["aa_ss_one_hot"]
+                node["residue_alpha_carbon_coordinate"] = aa_item["residue_alpha_carbon_coordinate"]
+                node["residue_chemical_classification"] = aa_item["residue_chemical_classification"]
+                node["residue_chemical_classification_one_hot_encoding"] = aa_item["residue_chemical_classification_one_hot_encoding"]
+                node["residue_secondary_structure"] = aa_item["residue_secondary_structure"]
+                node["residue_secondary_structure_one_hot_encoding"] = aa_item["residue_secondary_structure_one_hot_encoding"]
+                node["residue_relative_solvent_accessibility"] = aa_item["residue_relative_solvent_accessibility"]
+                node["residue_backbone_phi_angle"] = aa_item["residue_backbone_phi_angle"]
+                node["residue_backbone_psi_angle"] = aa_item["residue_backbone_psi_angle"]
+                node["residue_net_charge"] = aa_item["residue_net_charge"]
+                node["residue_pka"] = aa_item["residue_pka"]
+                node["residue_volume"] = aa_item["residue_volume"]
+                node["residue_hydrophobicity"] = aa_item["residue_hydrophobicity"]
+                node["residue_molecular_weight"] = aa_item["residue_molecular_weight"]
+                node["residue_isoelectric_point"] = aa_item["residue_isoelectric_point"]
+                node["residue_name_one_hot_encoding"] = aa_item["residue_name_one_hot_encoding"]
 
         if drop_node:
             continue
@@ -351,39 +364,39 @@ def build_amino_acid_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,l
             rmsf_item = flexibility_lookup.get(key)
             if rmsf_item is None:
                 if strict:
-                    logger.print(f"[ERROR] Missing RMSF entry for residue {aa_index} {aa_name}.")
+                    logger.print(f"[ERROR] Missing residue_root_mean_square_fluctuation entry for residue {residue_index} {residue_name}.")
                     return None
-                logger.print(f"[WARNING] Missing RMSF entry for residue {aa_index} {aa_name}. Node dropped.")
+                logger.print(f"[WARNING] Missing residue_root_mean_square_fluctuation entry for residue {residue_index} {residue_name}. Node dropped.")
                 continue
-            node["rmsf"] = rmsf_item["rmsf"]
+            node["residue_root_mean_square_fluctuation"] = rmsf_item[ "residue_root_mean_square_fluctuation" ]
 
         if disorder_membership is not None:
-            node["is_in_disorder_region"] = (key in disorder_membership)
+            node["is_in_disordered_region"] = (key in disorder_membership)
 
         if conservation_lookup is not None:
             cons_item = conservation_lookup.get(key)
             if cons_item is None:
                 if strict:
-                    logger.print(f"[ERROR] Missing conservation entry for residue {aa_index} {aa_name}.")
+                    logger.print(f"[ERROR] Missing residue_sequence_conservation_score entry for residue {residue_index} {residue_name}.")
                     return None
-                logger.print(f"[WARNING] Missing conservation entry for residue {aa_index} {aa_name}. Node dropped.")
+                logger.print(f"[WARNING] Missing residue_sequence_conservation_score entry for residue {residue_index} {residue_name}. Node dropped.")
                 continue
-            node["conservation_score"] = cons_item["conservation_score"]
+            node["residue_sequence_conservation_score"] = cons_item[ "normalized_shannon_information_content" ]
 
         if embedding_lookup is not None:
             emb_item = embedding_lookup.get(key)
             if emb_item is None:
                 if strict:
-                    logger.print(f"[ERROR] Missing embedding entry for residue {aa_index} {aa_name}.")
+                    logger.print(f"[ERROR] Missing residue_embedding entry for residue {residue_index} {residue_name}.")
                     return None
-                logger.print(f"[WARNING] Missing embedding entry for residue {aa_index} {aa_name}. Node dropped.")
+                logger.print(f"[WARNING] Missing residue_embedding entry for residue {residue_index} {residue_name}. Node dropped.")
                 continue
-            node["embedding"] = emb_item["embedding"]
+            node["residue_embedding"] = emb_item["residue_embedding"]
 
         if pocket_membership is not None:
-            node["is_in_pocket"] = (key in pocket_membership)
+            node["is_in_binding_pocket"] = (key in pocket_membership)
 
-        node = reorder_amino_acid_node(node)
+        node = reorder_residue_node(node)
         node_list.append(node)
 
     return node_list
@@ -407,11 +420,11 @@ def build_substrate_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,lo
             return None
         substrate_lookup[substrate_name] = item
 
-    docked_substrate_list = dock_report["docked_result"]["docked_substrates"]
+    docked_substrate_list = dock_report["enzyme_substrate_docking_result"]["docked_substrates"]
     node_list: List[Dict[str, Any]] = []
 
     for substrate_index, dock_item in enumerate(docked_substrate_list, start=1):
-        substrate_name = dock_item["substrate_name"]
+        substrate_name = dock_item["docked_substrate_name"]
 
         substrate_item = substrate_lookup.get(substrate_name)
         if substrate_item is None:
@@ -422,17 +435,17 @@ def build_substrate_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,lo
             continue
 
         node: Dict[str, Any] = {}
-        node["node_id"] = 0
+        node["node_index"] = 0
         node["node_type"] = "substrate"
-        node["node_type_one_hot"] = node_type_one_hot("substrate")
+        node["node_type_one_hot_encoding"] = node_type_one_hot("substrate")
         node["substrate_index"] = substrate_index
         node["substrate_name"] = substrate_name
-        node["smiles"] = substrate_item["smiles"]
-        node["num_atoms"] = substrate_item["num_atoms"]
-        node["mol_weight"] = substrate_item["mol_weight"]
-        node["logp"] = substrate_item["logp"]
-        node["docked_center_coord"] = dock_item["docked_center_coord"]
-        node["fingerprint"] = substrate_item["fingerprint"]
+        node["substrate_smiles"] = substrate_item["substrate_smiles"]
+        node["substrate_atom_count"] = substrate_item["substrate_atom_count"]
+        node["substrate_molecular_weight"] = substrate_item["substrate_molecular_weight"]
+        node["substrate_logp"] = substrate_item["substrate_logp"]
+        node["docked_substrate_center_coordinate"] = dock_item["docked_substrate_center_coordinate"]
+        node["substrate_fingerprint_encoding"] = substrate_item["substrate_fingerprint_encoding"]
 
         node = reorder_substrate_node(node)
         node_list.append(node)
@@ -445,8 +458,8 @@ def build_integrated_node_lookup(all_node_list: List[Dict[str, Any]],logger: Log
 
     for node in all_node_list:
         node_type = node.get("node_type")
-        if node_type == "amino_acid":
-            key = ("amino_acid", node["aa_index"], node["aa_name"])
+        if node_type == "residue":
+            key = ("residue", node["residue_index"], node["residue_name"])
         elif node_type == "substrate":
             key = ("substrate", node["substrate_name"])
         else:
@@ -472,9 +485,9 @@ def build_edge_entries_from_interactions(
     merged_edge_nodes: Dict[Tuple[str, int, int], Tuple[Dict[str, Any], Dict[str, Any]]] = {}
 
     for item in interactions:
-        interaction = item["interaction"]
-        node1 = item["node1"]
-        node2 = item["node2"]
+        interaction = item["molecular_interaction_type"]
+        node1 = item["source_node"]
+        node2 = item["target_node"]
 
         integrated_node_1 = resolve_interaction_node_to_integrated_node(node1, node_lookup, logger)
         if integrated_node_1 is None:
@@ -492,40 +505,40 @@ def build_edge_entries_from_interactions(
             logger.print("[WARNING] Interaction node2 cannot be resolved. Edge skipped.")
             continue
 
-        node_id_1 = integrated_node_1["node_id"]
-        node_id_2 = integrated_node_2["node_id"]
+        node_index_1 = integrated_node_1["node_index"]
+        node_index_2 = integrated_node_2["node_index"]
 
-        if node_id_1 <= node_id_2:
+        if node_index_1 <= node_index_2:
             left_node = integrated_node_1
             right_node = integrated_node_2
-            left_id = node_id_1
-            right_id = node_id_2
+            left_index = node_index_1
+            right_index = node_index_2
         else:
             left_node = integrated_node_2
             right_node = integrated_node_1
-            left_id = node_id_2
-            right_id = node_id_1
+            left_index = node_index_2
+            right_index = node_index_1
 
-        merge_key = (interaction, left_id, right_id)
+        merge_key = (interaction, left_index, right_index)
 
         merged_edge_count[merge_key] = merged_edge_count.get(merge_key, 0) + 1
         merged_edge_nodes[merge_key] = (left_node, right_node)
 
     edge_entry_list: List[Dict[str, Any]] = []
 
-    for interaction, node_id_1, node_id_2 in sorted(merged_edge_count.keys(), key=lambda x: (x[1], x[2], INTERACTION_ORDER.index(x[0]))):
-        node_1, node_2 = merged_edge_nodes[(interaction, node_id_1, node_id_2)]
+    for interaction, node_index_1, node_index_2 in sorted(merged_edge_count.keys(),key=lambda x: (x[1], x[2], INTERACTION_ORDER.index(x[0]))):
+        source_node, target_node = merged_edge_nodes[(interaction, node_index_1, node_index_2)]
 
-        edge = {
-            "interaction": interaction,
-            "interaction_one_hot": interaction_one_hot(interaction),
-            "interaction_count": merged_edge_count[(interaction, node_id_1, node_id_2)],
+        molecular_interaction = {
+            "molecular_interaction_type": interaction,
+            "molecular_interaction_one_hot_encoding": interaction_one_hot(interaction),
+            "interaction_count": merged_edge_count[(interaction, node_index_1, node_index_2)],
         }
 
         edge_entry_list.append({
-            "edge": edge,
-            "node_1": node_1,
-            "node_2": node_2,
+            "molecular_interaction": molecular_interaction,
+            "source_node": source_node,
+            "target_node": target_node,
         })
 
     return edge_entry_list
@@ -534,17 +547,17 @@ def build_edge_entries_from_interactions(
 def resolve_interaction_node_to_integrated_node(interaction_node: Dict[str, Any],node_lookup: Dict[Tuple[Any, ...], Dict[str, Any]],logger: Logger,) -> Dict[str, Any] | None:
     node_type = interaction_node.get("node_type")
 
-    if node_type == "amino_acid":
-        aa_index = interaction_node.get("aa_index")
-        aa_name = interaction_node.get("aa_name")
+    if node_type == "residue":
+        residue_index = interaction_node.get("residue_index")
+        residue_name = interaction_node.get("residue_name")
 
-        if not isinstance(aa_index, int) or not isinstance(aa_name, str):
-            logger.print("[ERROR] Invalid amino acid interaction node.")
+        if not isinstance(residue_index, int) or not isinstance(residue_name, str):
+            logger.print("[ERROR] Invalid residue interaction node.")
             return None
 
-        aa_name_norm = normalize_aa_name_to_one_letter(aa_name)
+        residue_name_norm = normalize_aa_name_to_one_letter(residue_name)
 
-        return node_lookup.get(("amino_acid", aa_index, aa_name_norm))
+        return node_lookup.get(("residue", residue_index, residue_name_norm))
 
     if node_type == "substrate":
         substrate_name = interaction_node.get("substrate_name")
@@ -569,67 +582,43 @@ def resolve_interaction_node_to_integrated_node(interaction_node: Dict[str, Any]
         return None
 
 
-def reorder_amino_acid_node(node: Dict[str, Any]) -> Dict[str, Any]:
+def reorder_residue_node(node: Dict[str, Any]) -> Dict[str, Any]:
     ordered: Dict[str, Any] = {}
 
-    ordered["node_id"] = node["node_id"]
+    ordered["node_index"] = node["node_index"]
     ordered["node_type"] = node["node_type"]
-    ordered["node_type_one_hot"] = node["node_type_one_hot"]
+    ordered["node_type_one_hot_encoding"] = node["node_type_one_hot_encoding"]
 
-    ordered["aa_index"] = node["aa_index"]
-    ordered["aa_name"] = node["aa_name"]
+    ordered["residue_index"] = node["residue_index"]
+    ordered["residue_name"] = node["residue_name"]
 
-    if "aa_name_one_hot" in node:
-        ordered["aa_name_one_hot"] = node["aa_name_one_hot"]
+    optional_fields = [
+        "residue_name_one_hot_encoding",
+        "residue_alpha_carbon_coordinate",
+        "residue_chemical_classification",
+        "residue_chemical_classification_one_hot_encoding",
+        "residue_secondary_structure",
+        "residue_secondary_structure_one_hot_encoding",
+        "residue_relative_solvent_accessibility",
+        "residue_backbone_phi_angle",
+        "residue_backbone_psi_angle",
+        "residue_net_charge",
+        "residue_pka",
+        "residue_volume",
+        "residue_hydrophobicity",
+        "residue_molecular_weight",
+        "residue_isoelectric_point",
+        "residue_root_mean_square_fluctuation",
+        "residue_sequence_conservation_score",
+        "residue_embedding",
+        "is_in_hydrophobic_cluster",
+        "is_in_disordered_region",
+        "is_in_binding_pocket",
+    ]
 
-    if "aa_coord" in node:
-        ordered["aa_coord"] = node["aa_coord"]
-
-    if "aa_class" in node:
-        ordered["aa_class"] = node["aa_class"]
-
-    if "aa_class_one_hot" in node:
-        ordered["aa_class_one_hot"] = node["aa_class_one_hot"]
-
-    if "aa_ss" in node:
-        ordered["aa_ss"] = node["aa_ss"]
-
-    if "aa_ss_one_hot" in node:
-        ordered["aa_ss_one_hot"] = node["aa_ss_one_hot"]
-
-    if "aa_rsa" in node:
-        ordered["aa_rsa"] = node["aa_rsa"]
-    if "aa_phi" in node:
-        ordered["aa_phi"] = node["aa_phi"]
-    if "aa_psi" in node:
-        ordered["aa_psi"] = node["aa_psi"]
-    if "aa_net_charge" in node:
-        ordered["aa_net_charge"] = node["aa_net_charge"]
-    if "aa_pka" in node:
-        ordered["aa_pka"] = node["aa_pka"]
-    if "aa_volume" in node:
-        ordered["aa_volume"] = node["aa_volume"]
-    if "aa_hydrophobicity" in node:
-        ordered["aa_hydrophobicity"] = node["aa_hydrophobicity"]
-    if "aa_molecular_weight" in node:
-        ordered["aa_molecular_weight"] = node["aa_molecular_weight"]
-    if "aa_pi" in node:
-        ordered["aa_pi"] = node["aa_pi"]
-
-    if "rmsf" in node:
-        ordered["rmsf"] = node["rmsf"]
-    if "conservation_score" in node:
-        ordered["conservation_score"] = node["conservation_score"]
-
-    if "embedding" in node:
-        ordered["embedding"] = node["embedding"]
-
-    if "is_in_hydrophobic_cluster" in node:
-        ordered["is_in_hydrophobic_cluster"] = node["is_in_hydrophobic_cluster"]
-    if "is_in_disorder_region" in node:
-        ordered["is_in_disorder_region"] = node["is_in_disorder_region"]
-    if "is_in_pocket" in node:
-        ordered["is_in_pocket"] = node["is_in_pocket"]
+    for field in optional_fields:
+        if field in node:
+            ordered[field] = node[field]
 
     return ordered
 
@@ -637,24 +626,24 @@ def reorder_amino_acid_node(node: Dict[str, Any]) -> Dict[str, Any]:
 def reorder_substrate_node(node: Dict[str, Any]) -> Dict[str, Any]:
     ordered: Dict[str, Any] = {}
 
-    ordered["node_id"] = node["node_id"]
+    ordered["node_index"] = node["node_index"]
     ordered["node_type"] = node["node_type"]
-    ordered["node_type_one_hot"] = node["node_type_one_hot"]
+    ordered["node_type_one_hot_encoding"] = node["node_type_one_hot_encoding"]
 
     ordered["substrate_index"] = node["substrate_index"]
     ordered["substrate_name"] = node["substrate_name"]
 
-    if "smiles" in node:
-        ordered["smiles"] = node["smiles"]
-    if "num_atoms" in node:
-        ordered["num_atoms"] = node["num_atoms"]
-    if "mol_weight" in node:
-        ordered["mol_weight"] = node["mol_weight"]
-    if "logp" in node:
-        ordered["logp"] = node["logp"]
-    if "docked_center_coord" in node:
-        ordered["docked_center_coord"] = node["docked_center_coord"]
-    if "fingerprint" in node:
-        ordered["fingerprint"] = node["fingerprint"]
+    optional_fields = [
+        "substrate_smiles",
+        "substrate_atom_count",
+        "substrate_molecular_weight",
+        "substrate_logp",
+        "docked_substrate_center_coordinate",
+        "substrate_fingerprint_encoding",
+    ]
+
+    for field in optional_fields:
+        if field in node:
+            ordered[field] = node[field]
 
     return ordered

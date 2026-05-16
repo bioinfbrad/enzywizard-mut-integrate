@@ -71,8 +71,8 @@ def run_mut_integrate_service(mutclean_report_path: str | Path,wt_input_dir: str
         logger.print(f"[ERROR] Invalid mut_clean_report format: {mutclean_report_path}")
         return False
 
-    mutclean_output_type = get_mut_integrate_supported_output_type(mutclean_report_data, logger)
-    if mutclean_output_type != "enzywizard_mut_clean":
+    mutclean_report_type = get_mut_integrate_supported_output_type(mutclean_report_data, logger)
+    if mutclean_report_type != "enzywizard_mut_clean":
         logger.print(
             f"[ERROR] mut_clean_report_path must point to an enzywizard_mut_clean JSON file: {mutclean_report_path}"
         )
@@ -112,21 +112,21 @@ def run_mut_integrate_service(mutclean_report_path: str | Path,wt_input_dir: str
             logger.print(f"[ERROR] Invalid report format in wt_input_dir: {json_path}")
             return False
 
-        output_type = get_mut_integrate_supported_output_type(data, logger)
-        if output_type is None:
+        report_type = get_mut_integrate_supported_output_type(data, logger)
+        if report_type is None:
             return False
 
-        if output_type not in MUT_INTEGRATE_SIDE_OUTPUT_TYPES:
+        if report_type not in MUT_INTEGRATE_SIDE_OUTPUT_TYPES:
             logger.print(
-                f"[ERROR] Unsupported report type in wt_input_dir for mut_integrate: {output_type} ({json_path.name})")
+                f"[ERROR] Unsupported report type in wt_input_dir for mut_integrate: {report_type} ({json_path.name})")
             return False
 
-        if output_type in wt_report_dict:
-            logger.print(f"[ERROR] Duplicate report type found in wt_input_dir: {output_type}")
+        if report_type in wt_report_dict:
+            logger.print(f"[ERROR] Duplicate report type found in wt_input_dir: {report_type}")
             return False
 
-        wt_report_dict[output_type] = data
-        logger.print(f"[INFO] Loaded wt report: {json_path.name} ({output_type})")
+        wt_report_dict[report_type] = data
+        logger.print(f"[INFO] Loaded wt report: {json_path.name} ({report_type})")
 
     for json_path in mut_json_path_list:
         if json_path.resolve() == mutclean_report_path.resolve():
@@ -140,21 +140,21 @@ def run_mut_integrate_service(mutclean_report_path: str | Path,wt_input_dir: str
             logger.print(f"[ERROR] Invalid report format in mut_input_dir: {json_path}")
             return False
 
-        output_type = get_mut_integrate_supported_output_type(data, logger)
-        if output_type is None:
+        report_type = get_mut_integrate_supported_output_type(data, logger)
+        if report_type is None:
             return False
 
-        if output_type not in MUT_INTEGRATE_SIDE_OUTPUT_TYPES:
+        if report_type not in MUT_INTEGRATE_SIDE_OUTPUT_TYPES:
             logger.print(
-                f"[ERROR] Unsupported report type in mut_input_dir for mut_integrate: {output_type} ({json_path.name})")
+                f"[ERROR] Unsupported report type in mut_input_dir for mut_integrate: {report_type} ({json_path.name})")
             return False
 
-        if output_type in mut_report_dict:
-            logger.print(f"[ERROR] Duplicate report type found in mut_input_dir: {output_type}")
+        if report_type in mut_report_dict:
+            logger.print(f"[ERROR] Duplicate report type found in mut_input_dir: {report_type}")
             return False
 
-        mut_report_dict[output_type] = data
-        logger.print(f"[INFO] Loaded mut report: {json_path.name} ({output_type})")
+        mut_report_dict[report_type] = data
+        logger.print(f"[INFO] Loaded mut report: {json_path.name} ({report_type})")
 
     if strict:
         expected_side_count = len(MUT_INTEGRATE_SIDE_OUTPUT_TYPES)
@@ -198,14 +198,14 @@ def run_mut_integrate_service(mutclean_report_path: str | Path,wt_input_dir: str
         return False
     logger.print(f"[INFO] Mut_integrate report JSON saved: {mut_report_json_path}")
 
-    wt_integrated_graph = mut_integrate_report.get("wt_integrated_graph")
+    wt_integrated_graph = mut_integrate_report.get("wild_type_integrated_graph")
     if not isinstance(wt_integrated_graph, list):
-        logger.print("[ERROR] wt_integrated_graph missing in mut-integrate report.")
+        logger.print("[ERROR] wild_type_integrated_graph missing in mut-integrate report.")
         return False
 
-    mut_integrated_graph = mut_integrate_report.get("mut_integrated_graph")
+    mut_integrated_graph = mut_integrate_report.get("mutant_integrated_graph")
     if not isinstance(mut_integrated_graph, list):
-        logger.print("[ERROR] mut_integrated_graph missing in mut-integrate report.")
+        logger.print("[ERROR] mutant_integrated_graph missing in mut-integrate report.")
         return False
 
     wt_split_result = split_integrated_graph_entries(wt_integrated_graph, logger)
