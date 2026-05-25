@@ -1126,7 +1126,7 @@ This command processes the mutation-paired JSON reports as follows:
    - Reorder fields into stable wild_type / mutant / difference output structure.
 
 12. Build amino acid substitution properties
-   - Parse mutation positions from cleaned_amino_acid_substitution.
+   - Parse mutation positions from cleaned_amino_acid_substitution. Multiple mutation sites are separated by ';'.
    - Match mutation residues in both cleaned residue lists.
    - Extract amino acid substitution properties from available reports, including:
      - amino acid properties

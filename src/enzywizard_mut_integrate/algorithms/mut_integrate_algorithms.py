@@ -492,19 +492,19 @@ def build_mutation_site_features(
             mut_conservation_score_list.append(float(mut_cons_item["normalized_shannon_information_content"]))
 
     if len(wt_name_list) > 0:
-        result["wild_type_residue_name"] = ",".join(wt_name_list)
+        result["wild_type_residue_name"] = ";".join(wt_name_list)
     if len(mut_name_list) > 0:
-        result["mutant_residue_name"] = ",".join(mut_name_list)
+        result["mutant_residue_name"] = ";".join(mut_name_list)
 
     if len(wt_class_list) > 0:
-        result["wild_type_residue_chemical_classification"] = ",".join(wt_class_list)
+        result["wild_type_residue_chemical_classification"] = ";".join(wt_class_list)
     if len(mut_class_list) > 0:
-        result["mutant_residue_chemical_classification"] = ",".join(mut_class_list)
+        result["mutant_residue_chemical_classification"] = ";".join(mut_class_list)
 
     if len(wt_ss_list) > 0:
-        result["wild_type_residue_secondary_structure"] = ",".join(wt_ss_list)
+        result["wild_type_residue_secondary_structure"] = ";".join(wt_ss_list)
     if len(mut_ss_list) > 0:
-        result["mutant_residue_secondary_structure"] = ",".join(mut_ss_list)
+        result["mutant_residue_secondary_structure"] = ";".join(mut_ss_list)
 
     _write_mutation_numeric_triplet(result, "residue_relative_solvent_accessibility", wt_rsa_list, mut_rsa_list)
     _write_mutation_angle_triplet(result, "residue_backbone_phi_angle", wt_phi_list, mut_phi_list)
