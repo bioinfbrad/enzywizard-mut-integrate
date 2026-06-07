@@ -611,6 +611,7 @@ def reorder_residue_node(node: Dict[str, Any]) -> Dict[str, Any]:
         "residue_root_mean_square_fluctuation",
         "residue_sequence_conservation_score",
         "residue_embedding",
+        "is_at_mutation_site",
         "is_in_hydrophobic_cluster",
         "is_in_disordered_region",
         "is_in_binding_pocket",

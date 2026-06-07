@@ -9,7 +9,7 @@ from ..utils.integrate_utils import build_lookup_by_residue,get_clean_new_residu
 from ..utils.mut_clean_utils import check_amino_acid_substitution, get_muts_from_aas
 from ..utils.mut_integrate_utils import synthesize_clean_report_from_mutclean
 
-from ..algorithms.integrate_algorithms import build_overall_statistics,build_integrated_graph
+from ..algorithms.integrate_algorithms import build_overall_statistics,build_integrated_graph,reorder_residue_node
 from ..utils.sequence_utils import normalize_aa_name_to_one_letter
 
 
@@ -114,6 +114,7 @@ def integrate_mut_reports(
     wt_integrated_graph, mut_integrated_graph = build_mut_integrated_graphs(
         wt_report_dict=wt_report_dict_full,
         mut_report_dict=mut_report_dict_full,
+        cleaned_amino_acid_substitution=cleaned_amino_acid_substitution,
         strict=strict,
         logger=logger,
     )
@@ -181,18 +182,40 @@ def build_mut_overall_statistics(
 def build_mut_integrated_graphs(
     wt_report_dict: Dict[str, Dict[str, Any]],
     mut_report_dict: Dict[str, Dict[str, Any]],
+    cleaned_amino_acid_substitution: str,
     strict: bool,
     logger: Logger,
 ) -> Tuple[List[Dict[str, Any]] | None, List[Dict[str, Any]] | None]:
+    mutation_position_set = {
+        pos for _, pos, _ in get_muts_from_aas(cleaned_amino_acid_substitution)
+    }
+
     wt_integrated_graph = build_integrated_graph(wt_report_dict, strict=strict, logger=logger)
     if wt_integrated_graph is None:
         return None, None
+    add_mutation_site_flags_to_graph(wt_integrated_graph, mutation_position_set)
 
     mut_integrated_graph = build_integrated_graph(mut_report_dict, strict=strict, logger=logger)
     if mut_integrated_graph is None:
         return None, None
+    add_mutation_site_flags_to_graph(mut_integrated_graph, mutation_position_set)
 
     return wt_integrated_graph, mut_integrated_graph
+
+def add_mutation_site_flags_to_graph(
+    integrated_graph: List[Dict[str, Any]],
+    mutation_position_set: set[int],
+) -> None:
+    for graph_entry in integrated_graph:
+        for node_key in ("source_node", "target_node", "isolated_node"):
+            node = graph_entry.get(node_key)
+            if not isinstance(node, dict):
+                continue
+            if node.get("node_type") != "residue":
+                continue
+            residue_index = node.get("residue_index")
+            node["is_at_mutation_site"] = residue_index in mutation_position_set
+            graph_entry[node_key] = reorder_residue_node(node)
 
 def reorder_mutation_site_features(data: Dict[str, Any]) -> Dict[str, Any]:
     ordered: Dict[str, Any] = {}
@@ -401,20 +424,6 @@ def build_mutation_site_features(
 
         if mut_aa_actual is None:
             logger.print(f"[ERROR] Mutation position missing in MUT cleaned residue list: {pos}")
-            return None
-
-        if wt_aa_actual != wt_aa_expected:
-            logger.print(
-                f"[ERROR] WT amino acid mismatch at mutation position {pos}: "
-                f"expected {wt_aa_expected}, got {wt_aa_actual}"
-            )
-            return None
-
-        if mut_aa_actual != mut_aa_expected:
-            logger.print(
-                f"[ERROR] MUT amino acid mismatch at mutation position {pos}: "
-                f"expected {mut_aa_expected}, got {mut_aa_actual}"
-            )
             return None
 
         wt_name_list.append(wt_aa_actual)

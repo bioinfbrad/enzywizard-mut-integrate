@@ -515,6 +515,7 @@ class IntegratedResidueNode(TypedDict):
 
     residue_embedding: NotRequired[list[float]]
 
+    is_at_mutation_site: NotRequired[bool]
     is_in_hydrophobic_cluster: NotRequired[bool]
     is_in_disordered_region: NotRequired[bool]
     is_in_binding_pocket: NotRequired[bool]

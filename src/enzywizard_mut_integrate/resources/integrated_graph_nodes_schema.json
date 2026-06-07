@@ -147,6 +147,10 @@
               "type": "number"
             }
           },
+          "is_at_mutation_site": {
+            "type": "boolean",
+            "description": "The field 'is_at_mutation_site' indicates whether the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) is located at an amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606)."
+          },
           "is_in_hydrophobic_cluster": {
             "type": "boolean",
             "description": "The field 'is_in_hydrophobic_cluster' indicates whether the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) is included in a hydrophobic cluster ('hydrophobic cluster': https://proteintools.uni-bayreuth.de/clusters/)."
@@ -184,6 +188,7 @@
           "residue_root_mean_square_fluctuation",
           "residue_sequence_conservation_score",
           "residue_embedding",
+          "is_at_mutation_site",
           "is_in_hydrophobic_cluster",
           "is_in_disordered_region",
           "is_in_binding_pocket"
