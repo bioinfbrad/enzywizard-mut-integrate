@@ -981,7 +981,22 @@ def validate_substrate_report(data: Dict[str, Any], logger: Logger) -> bool:
             logger.print("[ERROR] Invalid substrate_atom_count.")
             return False
 
-        for key in ["substrate_molecular_weight", "substrate_logp"]:
+        for key in [
+            "substrate_heavy_atom_count",
+            "substrate_hbond_donor_count",
+            "substrate_hbond_acceptor_count",
+            "substrate_rotatable_bond_count",
+        ]:
+            if not isinstance(item.get(key), int):
+                logger.print(f"[ERROR] Invalid substrate field: {key}")
+                return False
+
+        for key in [
+            "substrate_molecular_weight",
+            "substrate_logp",
+            "substrate_tpsa",
+            "substrate_molar_refractivity",
+        ]:
             if not _is_number(item.get(key)):
                 logger.print(f"[ERROR] Invalid substrate field: {key}")
                 return False
@@ -1003,6 +1018,19 @@ def validate_substrate_report(data: Dict[str, Any], logger: Logger) -> bool:
             if not _is_number(structure.get("substrate_structure_energy")):
                 logger.print("[ERROR] Invalid substrate_structure_energy.")
                 return False
+
+            for key in [
+                "substrate_structure_max_3d_diameter",
+                "substrate_structure_mean_pairwise_atom_distance",
+                "substrate_structure_std_pairwise_atom_distance",
+                "substrate_structure_asphericity",
+                "substrate_structure_spherocity",
+                "substrate_structure_principal_moment_ratio",
+                "substrate_structure_radius_of_gyration",
+            ]:
+                if not _is_number(structure.get(key)):
+                    logger.print(f"[ERROR] Invalid substrate possible structure field: {key}")
+                    return False
 
     return True
 

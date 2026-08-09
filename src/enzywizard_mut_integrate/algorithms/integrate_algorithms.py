@@ -9,7 +9,7 @@ from ..utils.sequence_utils import normalize_aa_name_to_one_letter
 
 def generate_integrate_report(overall_statistics: Dict[str, Any],integrated_graph: List[Dict[str, Any]]) -> Dict[str, Any]:
     return {
-        "report_type": "enzywizard_integrate",
+        "report_type": "enzywizard_mut_integrate",
         "overall_statistics": overall_statistics,
         "integrated_graph": integrated_graph,
     }
@@ -434,6 +434,23 @@ def build_substrate_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,lo
             logger.print(f"[WARNING] Missing substrate entry for docked substrate: {substrate_name}. Node dropped.")
             continue
 
+        docked_substrate_structure_name = dock_item["docked_substrate_structure_name"]
+        structure_lookup: Dict[str, Dict[str, Any]] = {}
+        for structure_item in substrate_item["substrate_possible_structures"]:
+            structure_name = structure_item["substrate_structure_name"]
+            if structure_name in structure_lookup:
+                logger.print(f"[ERROR] Duplicate substrate_structure_name in substrate report: {structure_name}")
+                return None
+            structure_lookup[structure_name] = structure_item
+
+        structure_item = structure_lookup.get(docked_substrate_structure_name)
+        if structure_item is None:
+            if strict:
+                logger.print(f"[ERROR] Missing substrate structure entry for docked substrate structure: {docked_substrate_structure_name}")
+                return None
+            logger.print(f"[WARNING] Missing substrate structure entry for docked substrate structure: {docked_substrate_structure_name}. Node dropped.")
+            continue
+
         node: Dict[str, Any] = {}
         node["node_index"] = 0
         node["node_type"] = "substrate"
@@ -444,6 +461,20 @@ def build_substrate_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,lo
         node["substrate_atom_count"] = substrate_item["substrate_atom_count"]
         node["substrate_molecular_weight"] = substrate_item["substrate_molecular_weight"]
         node["substrate_logp"] = substrate_item["substrate_logp"]
+        node["substrate_tpsa"] = substrate_item["substrate_tpsa"]
+        node["substrate_heavy_atom_count"] = substrate_item["substrate_heavy_atom_count"]
+        node["substrate_hbond_donor_count"] = substrate_item["substrate_hbond_donor_count"]
+        node["substrate_hbond_acceptor_count"] = substrate_item["substrate_hbond_acceptor_count"]
+        node["substrate_rotatable_bond_count"] = substrate_item["substrate_rotatable_bond_count"]
+        node["substrate_molar_refractivity"] = substrate_item["substrate_molar_refractivity"]
+        node["substrate_structure_energy"] = structure_item["substrate_structure_energy"]
+        node["substrate_structure_max_3d_diameter"] = structure_item["substrate_structure_max_3d_diameter"]
+        node["substrate_structure_mean_pairwise_atom_distance"] = structure_item["substrate_structure_mean_pairwise_atom_distance"]
+        node["substrate_structure_std_pairwise_atom_distance"] = structure_item["substrate_structure_std_pairwise_atom_distance"]
+        node["substrate_structure_asphericity"] = structure_item["substrate_structure_asphericity"]
+        node["substrate_structure_spherocity"] = structure_item["substrate_structure_spherocity"]
+        node["substrate_structure_principal_moment_ratio"] = structure_item["substrate_structure_principal_moment_ratio"]
+        node["substrate_structure_radius_of_gyration"] = structure_item["substrate_structure_radius_of_gyration"]
         node["docked_substrate_center_coordinate"] = dock_item["docked_substrate_center_coordinate"]
         node["substrate_fingerprint_encoding"] = substrate_item["substrate_fingerprint_encoding"]
 
@@ -639,6 +670,20 @@ def reorder_substrate_node(node: Dict[str, Any]) -> Dict[str, Any]:
         "substrate_atom_count",
         "substrate_molecular_weight",
         "substrate_logp",
+        "substrate_tpsa",
+        "substrate_heavy_atom_count",
+        "substrate_hbond_donor_count",
+        "substrate_hbond_acceptor_count",
+        "substrate_rotatable_bond_count",
+        "substrate_molar_refractivity",
+        "substrate_structure_energy",
+        "substrate_structure_max_3d_diameter",
+        "substrate_structure_mean_pairwise_atom_distance",
+        "substrate_structure_std_pairwise_atom_distance",
+        "substrate_structure_asphericity",
+        "substrate_structure_spherocity",
+        "substrate_structure_principal_moment_ratio",
+        "substrate_structure_radius_of_gyration",
         "docked_substrate_center_coordinate",
         "substrate_fingerprint_encoding",
     ]

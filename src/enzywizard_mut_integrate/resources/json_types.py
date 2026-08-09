@@ -344,6 +344,13 @@ substrate_report
 class SubstratePossibleStructureEntry(TypedDict):
     substrate_structure_name: str
     substrate_structure_energy: float
+    substrate_structure_max_3d_diameter: float
+    substrate_structure_mean_pairwise_atom_distance: float
+    substrate_structure_std_pairwise_atom_distance: float
+    substrate_structure_asphericity: float
+    substrate_structure_spherocity: float
+    substrate_structure_principal_moment_ratio: float
+    substrate_structure_radius_of_gyration: float
 
 
 class SubstrateEntry(TypedDict):
@@ -354,6 +361,12 @@ class SubstrateEntry(TypedDict):
     substrate_atom_count: int
     substrate_molecular_weight: float
     substrate_logp: float
+    substrate_tpsa: float
+    substrate_heavy_atom_count: int
+    substrate_hbond_donor_count: int
+    substrate_hbond_acceptor_count: int
+    substrate_rotatable_bond_count: int
+    substrate_molar_refractivity: float
 
     substrate_possible_structures: list[SubstratePossibleStructureEntry]
 
@@ -533,6 +546,20 @@ class IntegratedSubstrateNode(TypedDict):
     substrate_atom_count: NotRequired[int]
     substrate_molecular_weight: NotRequired[float]
     substrate_logp: NotRequired[float]
+    substrate_tpsa: NotRequired[float]
+    substrate_heavy_atom_count: NotRequired[int]
+    substrate_hbond_donor_count: NotRequired[int]
+    substrate_hbond_acceptor_count: NotRequired[int]
+    substrate_rotatable_bond_count: NotRequired[int]
+    substrate_molar_refractivity: NotRequired[float]
+    substrate_structure_energy: NotRequired[float]
+    substrate_structure_max_3d_diameter: NotRequired[float]
+    substrate_structure_mean_pairwise_atom_distance: NotRequired[float]
+    substrate_structure_std_pairwise_atom_distance: NotRequired[float]
+    substrate_structure_asphericity: NotRequired[float]
+    substrate_structure_spherocity: NotRequired[float]
+    substrate_structure_principal_moment_ratio: NotRequired[float]
+    substrate_structure_radius_of_gyration: NotRequired[float]
     docked_substrate_center_coordinate: NotRequired[list[float]]
     substrate_fingerprint_encoding: NotRequired[list[Literal[0, 1]]]
 
