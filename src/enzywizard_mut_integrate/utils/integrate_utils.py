@@ -1041,6 +1041,13 @@ def validate_dock_report(data: Dict[str, Any], logger: Logger) -> bool:
         return False
 
     result = data.get("enzyme_substrate_docking_result")
+    if result == {}:
+        logger.print(
+            "[ERROR] Dock report has no docking results. "
+            "Please re-run mut-integrate in non-strict mode without passing the dock report."
+        )
+        return False
+
     if not isinstance(result, dict):
         logger.print("[ERROR] Invalid enzyme_substrate_docking_result.")
         return False
