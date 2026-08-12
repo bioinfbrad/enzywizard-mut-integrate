@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import math
 from typing import Any, Dict, List, Tuple
 import json
 import re
@@ -10,8 +11,12 @@ from ..utils.IO_utils import write_json_from_dict_inline_leaf_lists
 
 from ..utils.integrate_utils import (
     SUPPORTED_OUTPUT_TYPES,
+    get_disorder_membership_set,
+    get_hydrophobic_cluster_membership_set,
+    get_pocket_membership_set,
     load_json_file,
     list_json_files,
+    residue_key,
     split_integrated_graph_entries,
     validate_clean_report,
     validate_aaprops_report,
@@ -26,6 +31,7 @@ from ..utils.integrate_utils import (
     validate_dock_report,
     validate_interaction_report,
 )
+from ..utils.sequence_utils import normalize_aa_name_to_one_letter
 
 
 MUT_INTEGRATE_SUPPORTED_OUTPUT_TYPES = set(SUPPORTED_OUTPUT_TYPES) | {"enzywizard_mut_clean"}
@@ -263,3 +269,229 @@ def synthesize_clean_report_from_mutclean(
         return None
 
     return clean_report
+
+
+def build_mutation_site_distance_features(
+    mut_list: List[Tuple[str, int, str]],
+    wt_residue_lookup: Dict[int, str],
+    mut_residue_lookup: Dict[int, str],
+    wt_report_dict: Dict[str, Dict[str, Any]],
+    mut_report_dict: Dict[str, Dict[str, Any]],
+    logger: Logger,
+) -> Dict[str, Any] | None:
+    wt_features = build_single_side_mutation_site_distance_features(
+        mut_list=mut_list,
+        residue_lookup=wt_residue_lookup,
+        report_dict=wt_report_dict,
+        logger=logger,
+    )
+    if wt_features is None:
+        return None
+
+    mut_features = build_single_side_mutation_site_distance_features(
+        mut_list=mut_list,
+        residue_lookup=mut_residue_lookup,
+        report_dict=mut_report_dict,
+        logger=logger,
+    )
+    if mut_features is None:
+        return None
+
+    result: Dict[str, Any] = {}
+    field_order = [
+        "mutation_site_distance_to_centroid",
+        "mutation_site_distance_to_nearest_binding_pocket",
+        "mutation_site_distance_to_nearest_hydrophobic_cluster",
+        "mutation_site_distance_to_nearest_disordered_region",
+        "mutation_site_distance_to_nearest_substrate",
+    ]
+
+    for field_name in field_order:
+        wt_has = field_name in wt_features
+        mut_has = field_name in mut_features
+
+        if wt_has:
+            result[f"wild_type_{field_name}"] = wt_features[field_name]
+        if mut_has:
+            result[f"mutant_{field_name}"] = mut_features[field_name]
+        if wt_has and mut_has:
+            result[f"difference_{field_name}"] = mut_features[field_name] - wt_features[field_name]
+
+    return result
+
+
+def build_single_side_mutation_site_distance_features(
+    mut_list: List[Tuple[str, int, str]],
+    residue_lookup: Dict[int, str],
+    report_dict: Dict[str, Dict[str, Any]],
+    logger: Logger,
+) -> Dict[str, float] | None:
+    aaprops_report = report_dict.get("enzywizard_aaprops")
+    if aaprops_report is None:
+        return {}
+
+    residue_properties = aaprops_report.get("amino_acid_residue_properties")
+    if not isinstance(residue_properties, list):
+        logger.print("[ERROR] amino_acid_residue_properties must be a list.")
+        return None
+
+    coordinate_lookup: Dict[Tuple[int, str], List[float]] = {}
+    all_coordinates: List[List[float]] = []
+
+    for item in residue_properties:
+        if not isinstance(item, dict):
+            logger.print("[ERROR] Invalid amino_acid_residue_properties entry.")
+            return None
+
+        residue_index = item.get("residue_index")
+        residue_name = item.get("residue_name")
+        coordinate = item.get("residue_alpha_carbon_coordinate")
+        if not isinstance(residue_index, int) or not isinstance(residue_name, str):
+            continue
+        clean_coordinate = _normalize_coordinate(coordinate)
+        if clean_coordinate is None:
+            continue
+
+        normalized_name = normalize_aa_name_to_one_letter(residue_name)
+        coordinate_lookup[residue_key(residue_index, normalized_name)] = clean_coordinate
+        all_coordinates.append(clean_coordinate)
+
+    if len(all_coordinates) == 0:
+        return {}
+
+    mutation_coordinates: List[List[float]] = []
+    for _, pos, _ in mut_list:
+        residue_name = residue_lookup.get(pos)
+        if residue_name is None:
+            logger.print(f"[ERROR] Mutation position missing in cleaned residue list: {pos}")
+            return None
+        coordinate = coordinate_lookup.get(residue_key(pos, residue_name))
+        if coordinate is not None:
+            mutation_coordinates.append(coordinate)
+
+    if len(mutation_coordinates) == 0:
+        return {}
+
+    result: Dict[str, float] = {}
+    centroid = _coordinate_centroid(all_coordinates)
+    result["mutation_site_distance_to_centroid"] = _mean_distance_to_targets(mutation_coordinates, [centroid])
+
+    pocket_report = report_dict.get("enzywizard_pocket")
+    if pocket_report is not None:
+        pocket_membership = get_pocket_membership_set(pocket_report, logger)
+        if pocket_membership is None:
+            return None
+        pocket_coordinates = _coordinates_for_membership(pocket_membership, coordinate_lookup)
+        nearest_distance = _mean_nearest_distance(mutation_coordinates, pocket_coordinates)
+        if nearest_distance is not None:
+            result["mutation_site_distance_to_nearest_binding_pocket"] = nearest_distance
+
+    hydro_report = report_dict.get("enzywizard_hydrocluster")
+    if hydro_report is not None:
+        hydro_membership = get_hydrophobic_cluster_membership_set(hydro_report, logger)
+        if hydro_membership is None:
+            return None
+        hydro_coordinates = _coordinates_for_membership(hydro_membership, coordinate_lookup)
+        nearest_distance = _mean_nearest_distance(mutation_coordinates, hydro_coordinates)
+        if nearest_distance is not None:
+            result["mutation_site_distance_to_nearest_hydrophobic_cluster"] = nearest_distance
+
+    disorder_report = report_dict.get("enzywizard_disorder")
+    if disorder_report is not None:
+        disorder_membership = get_disorder_membership_set(disorder_report, logger)
+        if disorder_membership is None:
+            return None
+        disorder_coordinates = _coordinates_for_membership(disorder_membership, coordinate_lookup)
+        nearest_distance = _mean_nearest_distance(mutation_coordinates, disorder_coordinates)
+        if nearest_distance is not None:
+            result["mutation_site_distance_to_nearest_disordered_region"] = nearest_distance
+
+    substrate_coordinates = _get_docked_substrate_center_coordinates(report_dict.get("enzywizard_dock"))
+    nearest_distance = _mean_nearest_distance(mutation_coordinates, substrate_coordinates)
+    if nearest_distance is not None:
+        result["mutation_site_distance_to_nearest_substrate"] = nearest_distance
+
+    return result
+
+
+def _coordinates_for_membership(
+    membership_set: set[Tuple[int, str]],
+    coordinate_lookup: Dict[Tuple[int, str], List[float]],
+) -> List[List[float]]:
+    out: List[List[float]] = []
+    for key in membership_set:
+        coordinate = coordinate_lookup.get(key)
+        if coordinate is not None:
+            out.append(coordinate)
+    return out
+
+
+def _get_docked_substrate_center_coordinates(dock_report: Dict[str, Any] | None) -> List[List[float]]:
+    if not isinstance(dock_report, dict):
+        return []
+    docking_result = dock_report.get("enzyme_substrate_docking_result")
+    if not isinstance(docking_result, dict):
+        return []
+    docked_substrates = docking_result.get("docked_substrates")
+    if not isinstance(docked_substrates, list):
+        return []
+
+    out: List[List[float]] = []
+    for substrate in docked_substrates:
+        if not isinstance(substrate, dict):
+            continue
+        coordinate = substrate.get("docked_substrate_center_coordinate")
+        clean_coordinate = _normalize_coordinate(coordinate)
+        if clean_coordinate is not None:
+            out.append(clean_coordinate)
+    return out
+
+
+def _mean_distance_to_targets(
+    source_coordinates: List[List[float]],
+    target_coordinates: List[List[float]],
+) -> float:
+    distance_list: List[float] = []
+    for source_coordinate in source_coordinates:
+        for target_coordinate in target_coordinates:
+            distance_list.append(_distance(source_coordinate, target_coordinate))
+    return sum(distance_list) / float(len(distance_list))
+
+
+def _mean_nearest_distance(
+    source_coordinates: List[List[float]],
+    target_coordinates: List[List[float]],
+) -> float | None:
+    if len(source_coordinates) == 0 or len(target_coordinates) == 0:
+        return None
+
+    nearest_distance_list: List[float] = []
+    for source_coordinate in source_coordinates:
+        nearest_distance_list.append(min(_distance(source_coordinate, target_coordinate) for target_coordinate in target_coordinates))
+
+    return sum(nearest_distance_list) / float(len(nearest_distance_list))
+
+
+def _normalize_coordinate(value: Any) -> List[float] | None:
+    if not isinstance(value, (list, tuple)) or len(value) < 3:
+        return None
+    out: List[float] = []
+    for item in value[:3]:
+        if isinstance(item, bool):
+            return None
+        try:
+            out.append(float(item))
+        except (TypeError, ValueError):
+            return None
+    return out
+
+
+def _coordinate_centroid(coordinate_list: List[List[float]]) -> List[float]:
+    return [
+        sum(coord[i] for coord in coordinate_list) / float(len(coordinate_list))
+        for i in range(3)
+    ]
+
+
+def _distance(coord_1: List[float], coord_2: List[float]) -> float:
+    return math.sqrt(sum((coord_1[i] - coord_2[i]) ** 2 for i in range(3)))

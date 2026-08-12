@@ -3,13 +3,13 @@ from __future__ import annotations
 from typing import Any, Dict, List, Tuple
 
 from ..utils.logging_utils import Logger
-from ..utils.integrate_utils import INTERACTION_ORDER,aa_class_statistics_to_list,aa_name_statistics_to_list,aa_ss_statistics_to_list,build_lookup_by_residue,get_clean_new_residue_list,get_disorder_membership_set,get_hydrophobic_cluster_membership_set,get_pocket_membership_set,interaction_one_hot,node_type_one_hot,residue_key,substrate_key
+from ..utils.integrate_utils import INTERACTION_ORDER,aa_class_statistics_to_list,aa_name_statistics_to_list,aa_ss_statistics_to_list,build_lookup_by_residue,build_protein_derived_statistics,get_clean_new_residue_list,get_disorder_membership_set,get_hydrophobic_cluster_membership_set,get_pocket_membership_set,interaction_one_hot,node_type_one_hot,residue_key,substrate_key
 from ..utils.sequence_utils import normalize_aa_name_to_one_letter
 
 
 def generate_integrate_report(overall_statistics: Dict[str, Any],integrated_graph: List[Dict[str, Any]]) -> Dict[str, Any]:
     return {
-        "report_type": "enzywizard_mut_integrate",
+        "report_type": "enzywizard_integrate",
         "overall_statistics": overall_statistics,
         "integrated_graph": integrated_graph,
     }
@@ -59,6 +59,7 @@ def integrate_reports(report_dict: Dict[str, Dict[str, Any]],strict: bool,logger
 def build_overall_statistics(report_dict: Dict[str, Dict[str, Any]],strict: bool,logger: Logger) -> Dict[str, Any] | None:
     overall_statistics: Dict[str, Any] = {}
 
+    clean_report = report_dict.get("enzywizard_clean")
     aaprops_report = report_dict.get("enzywizard_aaprops")
     hydro_report = report_dict.get("enzywizard_hydrocluster")
     disorder_report = report_dict.get("enzywizard_disorder")
@@ -67,7 +68,14 @@ def build_overall_statistics(report_dict: Dict[str, Dict[str, Any]],strict: bool
     dock_report = report_dict.get("enzywizard_dock")
     interaction_report = report_dict.get("enzywizard_interaction")
 
+    protein_derived_statistics = build_protein_derived_statistics(clean_report, aaprops_report, logger)
+    if protein_derived_statistics is None:
+        return None
+    overall_statistics.update(protein_derived_statistics)
+
     if (
+        len(overall_statistics) == 0
+        and
         aaprops_report is None
         and hydro_report is None
         and disorder_report is None

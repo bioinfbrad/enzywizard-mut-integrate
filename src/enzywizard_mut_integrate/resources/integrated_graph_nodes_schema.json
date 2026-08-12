@@ -289,11 +289,11 @@
           },
           "substrate_structure_spherocity": {
             "type": "number",
-            "description": "The field 'substrate_structure_spherocity' indicates the spherocity index ('spherocity index': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
+            "description": "The field 'substrate_structure_spherocity' indicates the spherocity ('spherocity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
           },
           "substrate_structure_principal_moment_ratio": {
             "type": "number",
-            "description": "The field 'substrate_structure_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments of inertia ('moment of inertia': https://goldbook.iupac.org/terms/view/M03954) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_structure_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments of inertia ('moment of inertia': https://goldbook.iupac.org/terms/view/M04006) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
           },
           "substrate_structure_radius_of_gyration": {
             "type": "number",

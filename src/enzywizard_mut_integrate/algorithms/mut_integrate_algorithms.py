@@ -7,7 +7,7 @@ from ..utils.logging_utils import Logger
 from ..utils.integrate_utils import build_lookup_by_residue,get_clean_new_residue_list
 
 from ..utils.mut_clean_utils import check_amino_acid_substitution, get_muts_from_aas
-from ..utils.mut_integrate_utils import synthesize_clean_report_from_mutclean
+from ..utils.mut_integrate_utils import build_mutation_site_distance_features,synthesize_clean_report_from_mutclean
 
 from ..algorithms.integrate_algorithms import build_overall_statistics,build_integrated_graph,reorder_residue_node
 from ..utils.sequence_utils import normalize_aa_name_to_one_letter
@@ -221,11 +221,9 @@ def reorder_mutation_site_features(data: Dict[str, Any]) -> Dict[str, Any]:
     ordered: Dict[str, Any] = {}
 
     field_order = [
-        "residue_name",
         "residue_name_one_hot_encoding",
         "residue_chemical_classification",
         "residue_chemical_classification_one_hot_encoding",
-        "residue_secondary_structure",
         "residue_secondary_structure_one_hot_encoding",
         "residue_relative_solvent_accessibility",
         "residue_backbone_phi_angle",
@@ -238,6 +236,11 @@ def reorder_mutation_site_features(data: Dict[str, Any]) -> Dict[str, Any]:
         "residue_isoelectric_point",
         "residue_root_mean_square_fluctuation",
         "residue_sequence_conservation_score",
+        "mutation_site_distance_to_centroid",
+        "mutation_site_distance_to_nearest_binding_pocket",
+        "mutation_site_distance_to_nearest_hydrophobic_cluster",
+        "mutation_site_distance_to_nearest_disordered_region",
+        "mutation_site_distance_to_nearest_substrate",
     ]
 
     for field_name in field_order:
@@ -500,20 +503,10 @@ def build_mutation_site_features(
                 return None
             mut_conservation_score_list.append(float(mut_cons_item["normalized_shannon_information_content"]))
 
-    if len(wt_name_list) > 0:
-        result["wild_type_residue_name"] = ";".join(wt_name_list)
-    if len(mut_name_list) > 0:
-        result["mutant_residue_name"] = ";".join(mut_name_list)
-
     if len(wt_class_list) > 0:
         result["wild_type_residue_chemical_classification"] = ";".join(wt_class_list)
     if len(mut_class_list) > 0:
         result["mutant_residue_chemical_classification"] = ";".join(mut_class_list)
-
-    if len(wt_ss_list) > 0:
-        result["wild_type_residue_secondary_structure"] = ";".join(wt_ss_list)
-    if len(mut_ss_list) > 0:
-        result["mutant_residue_secondary_structure"] = ";".join(mut_ss_list)
 
     _write_mutation_numeric_triplet(result, "residue_relative_solvent_accessibility", wt_rsa_list, mut_rsa_list)
     _write_mutation_angle_triplet(result, "residue_backbone_phi_angle", wt_phi_list, mut_phi_list)
@@ -531,10 +524,21 @@ def build_mutation_site_features(
     _write_mutation_vector_triplet(result, "residue_chemical_classification_one_hot_encoding", wt_residue_class_one_hot_list, mut_residue_class_one_hot_list)
     _write_mutation_vector_triplet(result, "residue_secondary_structure_one_hot_encoding", wt_residue_ss_one_hot_list, mut_residue_ss_one_hot_list)
 
+    distance_features = build_mutation_site_distance_features(
+        mut_list=mut_list,
+        wt_residue_lookup=wt_residue_lookup,
+        mut_residue_lookup=mut_residue_lookup,
+        wt_report_dict=wt_report_dict,
+        mut_report_dict=mut_report_dict,
+        logger=logger,
+    )
+    if distance_features is None:
+        return None
+    result.update(distance_features)
+
     result = reorder_mutation_site_features(result)
 
     return result
-
 
 
 def reorder_mut_overall_statistics(
@@ -544,6 +548,18 @@ def reorder_mut_overall_statistics(
     ordered: Dict[str, Any] = {}
 
     field_order = [
+        "sequence_length",
+        "total_molecular_weight",
+        "total_net_charge",
+        "total_residue_volume",
+        "max_3d_diameter",
+        "radius_of_gyration",
+        "asphericity",
+        "spherocity",
+        "principal_moment_ratio",
+        "bounding_box_volume",
+        "mean_pairwise_ca_distance",
+        "std_pairwise_ca_distance",
         "residue_name_count",
         "residue_chemical_classification_count",
         "residue_secondary_structure_count",

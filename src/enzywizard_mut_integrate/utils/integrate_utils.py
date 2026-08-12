@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import math
 from typing import Any, Dict, List, Tuple
 import json
 import re
@@ -1186,3 +1187,205 @@ def validate_interaction_node(node: Dict[str, Any], logger: Logger) -> bool:
 
     logger.print("[ERROR] Invalid interaction node_type.")
     return False
+
+
+def build_protein_derived_statistics(
+    clean_report: Dict[str, Any] | None,
+    aaprops_report: Dict[str, Any] | None,
+    logger: Logger,
+) -> Dict[str, Any] | None:
+    overall_statistics: Dict[str, Any] = {}
+
+    if isinstance(clean_report, dict):
+        clean_residue_list = get_clean_new_residue_list(clean_report, logger)
+        if clean_residue_list is None:
+            return None
+        overall_statistics["sequence_length"] = len(clean_residue_list)
+
+    if aaprops_report is None:
+        return overall_statistics
+
+    residue_properties = aaprops_report.get("amino_acid_residue_properties")
+    if not isinstance(residue_properties, list):
+        logger.print("[ERROR] amino_acid_residue_properties must be a list.")
+        return None
+
+    molecular_weight_list: List[float] = []
+    net_charge_list: List[float] = []
+    residue_volume_list: List[float] = []
+    ca_coordinate_list: List[List[float]] = []
+
+    for residue in residue_properties:
+        if not isinstance(residue, dict):
+            logger.print("[ERROR] Invalid amino_acid_residue_properties entry.")
+            return None
+
+        molecular_weight = residue.get("residue_molecular_weight")
+        net_charge = residue.get("residue_net_charge")
+        residue_volume = residue.get("residue_volume")
+        ca_coordinate = residue.get("residue_alpha_carbon_coordinate")
+
+        if isinstance(molecular_weight, (int, float)) and not isinstance(molecular_weight, bool):
+            molecular_weight_list.append(float(molecular_weight))
+        if isinstance(net_charge, (int, float)) and not isinstance(net_charge, bool):
+            net_charge_list.append(float(net_charge))
+        if isinstance(residue_volume, (int, float)) and not isinstance(residue_volume, bool):
+            residue_volume_list.append(float(residue_volume))
+        clean_coordinate = _normalize_coordinate(ca_coordinate)
+        if clean_coordinate is not None:
+            ca_coordinate_list.append(clean_coordinate)
+
+    if len(molecular_weight_list) > 0:
+        overall_statistics["total_molecular_weight"] = sum(molecular_weight_list)
+    if len(net_charge_list) > 0:
+        overall_statistics["total_net_charge"] = sum(net_charge_list)
+    if len(residue_volume_list) > 0:
+        overall_statistics["total_residue_volume"] = sum(residue_volume_list)
+
+    shape_statistics = build_ca_shape_statistics(ca_coordinate_list)
+    overall_statistics.update(shape_statistics)
+
+    return overall_statistics
+
+
+def build_ca_shape_statistics(coordinate_list: List[List[float]]) -> Dict[str, Any]:
+    if len(coordinate_list) == 0:
+        return {}
+
+    centroid = _coordinate_centroid(coordinate_list)
+    min_coord = [min(coord[i] for coord in coordinate_list) for i in range(3)]
+    max_coord = [max(coord[i] for coord in coordinate_list) for i in range(3)]
+    bounding_box_volume = (
+        (max_coord[0] - min_coord[0])
+        * (max_coord[1] - min_coord[1])
+        * (max_coord[2] - min_coord[2])
+    )
+
+    squared_distance_sum = 0.0
+    for coord in coordinate_list:
+        squared_distance_sum += _squared_distance(coord, centroid)
+    radius_of_gyration = math.sqrt(squared_distance_sum / float(len(coordinate_list)))
+
+    pairwise_distance_list: List[float] = []
+    for i in range(len(coordinate_list)):
+        for j in range(i + 1, len(coordinate_list)):
+            pairwise_distance_list.append(_distance(coordinate_list[i], coordinate_list[j]))
+
+    if len(pairwise_distance_list) > 0:
+        max_3d_diameter = max(pairwise_distance_list)
+        mean_pairwise_ca_distance = sum(pairwise_distance_list) / float(len(pairwise_distance_list))
+        variance = sum((dist - mean_pairwise_ca_distance) ** 2 for dist in pairwise_distance_list) / float(len(pairwise_distance_list))
+        std_pairwise_ca_distance = math.sqrt(variance)
+    else:
+        max_3d_diameter = 0.0
+        mean_pairwise_ca_distance = 0.0
+        std_pairwise_ca_distance = 0.0
+
+    covariance = _coordinate_covariance_matrix(coordinate_list, centroid)
+    eigenvalues = sorted(_symmetric_3x3_eigenvalues(covariance), reverse=True)
+    total_variance = sum(eigenvalues)
+
+    out: Dict[str, Any] = {
+        "max_3d_diameter": max_3d_diameter,
+        "radius_of_gyration": radius_of_gyration,
+        "bounding_box_volume": bounding_box_volume,
+        "mean_pairwise_ca_distance": mean_pairwise_ca_distance,
+        "std_pairwise_ca_distance": std_pairwise_ca_distance,
+    }
+
+    if total_variance > 0.0:
+        lambda_1, lambda_2, lambda_3 = eigenvalues
+        out["asphericity"] = lambda_1 - 0.5 * (lambda_2 + lambda_3)
+        out["spherocity"] = 3.0 * lambda_3 / total_variance
+        if lambda_3 > 1e-12:
+            out["principal_moment_ratio"] = lambda_1 / lambda_3
+
+    return out
+
+
+def _normalize_coordinate(value: Any) -> List[float] | None:
+    if not isinstance(value, (list, tuple)) or len(value) < 3:
+        return None
+    out: List[float] = []
+    for item in value[:3]:
+        if isinstance(item, bool):
+            return None
+        try:
+            out.append(float(item))
+        except (TypeError, ValueError):
+            return None
+    return out
+
+
+def _coordinate_centroid(coordinate_list: List[List[float]]) -> List[float]:
+    return [
+        sum(coord[i] for coord in coordinate_list) / float(len(coordinate_list))
+        for i in range(3)
+    ]
+
+
+def _squared_distance(coord_1: List[float], coord_2: List[float]) -> float:
+    return sum((coord_1[i] - coord_2[i]) ** 2 for i in range(3))
+
+
+def _distance(coord_1: List[float], coord_2: List[float]) -> float:
+    return math.sqrt(_squared_distance(coord_1, coord_2))
+
+
+def _coordinate_covariance_matrix(coordinate_list: List[List[float]], centroid: List[float]) -> List[List[float]]:
+    matrix = [[0.0, 0.0, 0.0] for _ in range(3)]
+    for coord in coordinate_list:
+        centered = [coord[i] - centroid[i] for i in range(3)]
+        for i in range(3):
+            for j in range(3):
+                matrix[i][j] += centered[i] * centered[j]
+    for i in range(3):
+        for j in range(3):
+            matrix[i][j] /= float(len(coordinate_list))
+    return matrix
+
+
+def _symmetric_3x3_eigenvalues(matrix: List[List[float]]) -> List[float]:
+    a = [[float(matrix[i][j]) for j in range(3)] for i in range(3)]
+
+    for _ in range(50):
+        p = 0
+        q = 1
+        max_offdiag = abs(a[p][q])
+        for i in range(3):
+            for j in range(i + 1, 3):
+                value = abs(a[i][j])
+                if value > max_offdiag:
+                    max_offdiag = value
+                    p = i
+                    q = j
+        if max_offdiag < 1e-12:
+            break
+
+        if abs(a[p][p] - a[q][q]) < 1e-12:
+            angle = math.pi / 4.0
+        else:
+            angle = 0.5 * math.atan2(2.0 * a[p][q], a[q][q] - a[p][p])
+
+        cos_angle = math.cos(angle)
+        sin_angle = math.sin(angle)
+        app = a[p][p]
+        aqq = a[q][q]
+        apq = a[p][q]
+
+        a[p][p] = cos_angle * cos_angle * app - 2.0 * sin_angle * cos_angle * apq + sin_angle * sin_angle * aqq
+        a[q][q] = sin_angle * sin_angle * app + 2.0 * sin_angle * cos_angle * apq + cos_angle * cos_angle * aqq
+        a[p][q] = 0.0
+        a[q][p] = 0.0
+
+        for r in range(3):
+            if r == p or r == q:
+                continue
+            arp = a[r][p]
+            arq = a[r][q]
+            a[r][p] = cos_angle * arp - sin_angle * arq
+            a[p][r] = a[r][p]
+            a[r][q] = sin_angle * arp + cos_angle * arq
+            a[q][r] = a[r][q]
+
+    return [max(0.0, a[i][i]) for i in range(3)]

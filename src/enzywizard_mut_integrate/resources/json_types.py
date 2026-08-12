@@ -459,6 +459,19 @@ integrate_report
 
 
 class IntegratedOverallStatistics(TypedDict, total=False):
+    sequence_length: int
+    total_molecular_weight: float
+    total_net_charge: float
+    total_residue_volume: float
+    max_3d_diameter: float
+    radius_of_gyration: float
+    asphericity: float
+    spherocity: float
+    principal_moment_ratio: float
+    bounding_box_volume: float
+    mean_pairwise_ca_distance: float
+    std_pairwise_ca_distance: float
+
     residue_name_count: list[int]
     residue_chemical_classification_count: list[int]
     residue_secondary_structure_count: list[int]
@@ -600,6 +613,54 @@ mut_integrate_report
 
 
 class MutIntegratedOverallStatistics(TypedDict, total=False):
+    wild_type_sequence_length: int
+    mutant_sequence_length: int
+    difference_sequence_length: int
+
+    wild_type_total_molecular_weight: float
+    mutant_total_molecular_weight: float
+    difference_total_molecular_weight: float
+
+    wild_type_total_net_charge: float
+    mutant_total_net_charge: float
+    difference_total_net_charge: float
+
+    wild_type_total_residue_volume: float
+    mutant_total_residue_volume: float
+    difference_total_residue_volume: float
+
+    wild_type_max_3d_diameter: float
+    mutant_max_3d_diameter: float
+    difference_max_3d_diameter: float
+
+    wild_type_radius_of_gyration: float
+    mutant_radius_of_gyration: float
+    difference_radius_of_gyration: float
+
+    wild_type_asphericity: float
+    mutant_asphericity: float
+    difference_asphericity: float
+
+    wild_type_spherocity: float
+    mutant_spherocity: float
+    difference_spherocity: float
+
+    wild_type_principal_moment_ratio: float
+    mutant_principal_moment_ratio: float
+    difference_principal_moment_ratio: float
+
+    wild_type_bounding_box_volume: float
+    mutant_bounding_box_volume: float
+    difference_bounding_box_volume: float
+
+    wild_type_mean_pairwise_ca_distance: float
+    mutant_mean_pairwise_ca_distance: float
+    difference_mean_pairwise_ca_distance: float
+
+    wild_type_std_pairwise_ca_distance: float
+    mutant_std_pairwise_ca_distance: float
+    difference_std_pairwise_ca_distance: float
+
     wild_type_residue_name_count: list[int]
     mutant_residue_name_count: list[int]
     difference_residue_name_count: list[float]
@@ -714,8 +775,6 @@ class MutIntegratedOverallStatistics(TypedDict, total=False):
 
 
 class AminoAcidSubstitutionProperties(TypedDict, total=False):
-    wild_type_residue_name: str
-    mutant_residue_name: str
 
     wild_type_residue_name_one_hot_encoding: list[float]
     mutant_residue_name_one_hot_encoding: list[float]
@@ -728,8 +787,6 @@ class AminoAcidSubstitutionProperties(TypedDict, total=False):
     mutant_residue_chemical_classification_one_hot_encoding: list[float]
     difference_residue_chemical_classification_one_hot_encoding: list[float]
 
-    wild_type_residue_secondary_structure: str
-    mutant_residue_secondary_structure: str
 
     wild_type_residue_secondary_structure_one_hot_encoding: list[float]
     mutant_residue_secondary_structure_one_hot_encoding: list[float]
@@ -778,6 +835,27 @@ class AminoAcidSubstitutionProperties(TypedDict, total=False):
     wild_type_residue_sequence_conservation_score: float
     mutant_residue_sequence_conservation_score: float
     difference_residue_sequence_conservation_score: float
+
+    wild_type_mutation_site_distance_to_centroid: float
+    mutant_mutation_site_distance_to_centroid: float
+    difference_mutation_site_distance_to_centroid: float
+
+    wild_type_mutation_site_distance_to_nearest_binding_pocket: float
+    mutant_mutation_site_distance_to_nearest_binding_pocket: float
+    difference_mutation_site_distance_to_nearest_binding_pocket: float
+
+    wild_type_mutation_site_distance_to_nearest_hydrophobic_cluster: float
+    mutant_mutation_site_distance_to_nearest_hydrophobic_cluster: float
+    difference_mutation_site_distance_to_nearest_hydrophobic_cluster: float
+
+    wild_type_mutation_site_distance_to_nearest_disordered_region: float
+    mutant_mutation_site_distance_to_nearest_disordered_region: float
+    difference_mutation_site_distance_to_nearest_disordered_region: float
+
+    wild_type_mutation_site_distance_to_nearest_substrate: float
+    mutant_mutation_site_distance_to_nearest_substrate: float
+    difference_mutation_site_distance_to_nearest_substrate: float
+
 
 
 class EnzyWizardMutIntegrateOutput(TypedDict):

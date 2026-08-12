@@ -104,6 +104,150 @@ The program outputs the following files into the output directories:
 
      The "overall_statistics" object may contain:
 
+     - "wild_type_sequence_length"
+       - Data type: integer
+       - Description: The field 'wild_type_sequence_length' indicates the sequence length ('sequence length': http://edamontology.org/data_1249), measured as the number ('count': http://purl.obolibrary.org/obo/STATO_0000047) of amino acid residues ('residue': http://purl.obolibrary.org/obo/GENO_0000782) in the cleaned protein sequence ('protein sequence': http://edamontology.org/data_2976) in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_sequence_length"
+       - Data type: integer
+       - Description: The field 'mutant_sequence_length' indicates the sequence length ('sequence length': http://edamontology.org/data_1249), measured as the number ('count': http://purl.obolibrary.org/obo/STATO_0000047) of amino acid residues ('residue': http://purl.obolibrary.org/obo/GENO_0000782) in the cleaned protein sequence ('protein sequence': http://edamontology.org/data_2976) in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_sequence_length"
+       - Data type: integer
+       - Description: The field 'difference_sequence_length' indicates the difference between the mutant value and the wild-type value for the sequence length ('sequence length': http://edamontology.org/data_1249), measured as the number ('count': http://purl.obolibrary.org/obo/STATO_0000047) of amino acid residues ('residue': http://purl.obolibrary.org/obo/GENO_0000782) in the cleaned protein sequence ('protein sequence': http://edamontology.org/data_2976).
+
+     - "wild_type_total_molecular_weight"
+       - Data type: number
+       - Description: The field 'wild_type_total_molecular_weight' indicates the total molecular weight, calculated as the sum of residue molecular weights ('molecular weight': https://goldbook.iupac.org/terms/view/R05271) across the protein sequence ('protein sequence': http://edamontology.org/data_2976) in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_total_molecular_weight"
+       - Data type: number
+       - Description: The field 'mutant_total_molecular_weight' indicates the total molecular weight, calculated as the sum of residue molecular weights ('molecular weight': https://goldbook.iupac.org/terms/view/R05271) across the protein sequence ('protein sequence': http://edamontology.org/data_2976) in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_total_molecular_weight"
+       - Data type: number
+       - Description: The field 'difference_total_molecular_weight' indicates the difference between the mutant value and the wild-type value for the total molecular weight, calculated as the sum of residue molecular weights ('molecular weight': https://goldbook.iupac.org/terms/view/R05271) across the protein sequence ('protein sequence': http://edamontology.org/data_2976).
+
+     - "wild_type_total_net_charge"
+       - Data type: number
+       - Description: The field 'wild_type_total_net_charge' indicates the total net charge, calculated as the sum of residue electric charges ('electric charge': https://goldbook.iupac.org/terms/view/E01923) across the protein sequence ('protein sequence': http://edamontology.org/data_2976) in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_total_net_charge"
+       - Data type: number
+       - Description: The field 'mutant_total_net_charge' indicates the total net charge, calculated as the sum of residue electric charges ('electric charge': https://goldbook.iupac.org/terms/view/E01923) across the protein sequence ('protein sequence': http://edamontology.org/data_2976) in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_total_net_charge"
+       - Data type: number
+       - Description: The field 'difference_total_net_charge' indicates the difference between the mutant value and the wild-type value for the total net charge, calculated as the sum of residue electric charges ('electric charge': https://goldbook.iupac.org/terms/view/E01923) across the protein sequence ('protein sequence': http://edamontology.org/data_2976).
+
+     - "wild_type_total_residue_volume"
+       - Data type: number
+       - Description: The field 'wild_type_total_residue_volume' indicates the total residue volume ('volume': http://purl.obolibrary.org/obo/PATO_0000918), calculated as the sum of residue volumes across the protein sequence ('protein sequence': http://edamontology.org/data_2976) in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_total_residue_volume"
+       - Data type: number
+       - Description: The field 'mutant_total_residue_volume' indicates the total residue volume ('volume': http://purl.obolibrary.org/obo/PATO_0000918), calculated as the sum of residue volumes across the protein sequence ('protein sequence': http://edamontology.org/data_2976) in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_total_residue_volume"
+       - Data type: number
+       - Description: The field 'difference_total_residue_volume' indicates the difference between the mutant value and the wild-type value for the total residue volume ('volume': http://purl.obolibrary.org/obo/PATO_0000918), calculated as the sum of residue volumes across the protein sequence ('protein sequence': http://edamontology.org/data_2976).
+
+     - "wild_type_max_3d_diameter"
+       - Data type: number
+       - Description: The field 'wild_type_max_3d_diameter' indicates the maximum three-dimensional diameter ('diameter': http://purl.obolibrary.org/obo/PATO_0001334), calculated as the maximum pairwise distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) between residue alpha-carbon coordinates in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_max_3d_diameter"
+       - Data type: number
+       - Description: The field 'mutant_max_3d_diameter' indicates the maximum three-dimensional diameter ('diameter': http://purl.obolibrary.org/obo/PATO_0001334), calculated as the maximum pairwise distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) between residue alpha-carbon coordinates in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_max_3d_diameter"
+       - Data type: number
+       - Description: The field 'difference_max_3d_diameter' indicates the difference between the mutant value and the wild-type value for the maximum three-dimensional diameter ('diameter': http://purl.obolibrary.org/obo/PATO_0001334), calculated as the maximum pairwise distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) between residue alpha-carbon coordinates.
+
+     - "wild_type_radius_of_gyration"
+       - Data type: number
+       - Description: The field 'wild_type_radius_of_gyration' indicates the radius of gyration ('radius of gyration': https://goldbook.iupac.org/terms/view/R05121) calculated from residue alpha-carbon coordinates in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_radius_of_gyration"
+       - Data type: number
+       - Description: The field 'mutant_radius_of_gyration' indicates the radius of gyration ('radius of gyration': https://goldbook.iupac.org/terms/view/R05121) calculated from residue alpha-carbon coordinates in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_radius_of_gyration"
+       - Data type: number
+       - Description: The field 'difference_radius_of_gyration' indicates the difference between the mutant value and the wild-type value for the radius of gyration ('radius of gyration': https://goldbook.iupac.org/terms/view/R05121) calculated from residue alpha-carbon coordinates.
+
+     - "wild_type_asphericity"
+       - Data type: number
+       - Description: The field 'wild_type_asphericity' indicates the asphericity ('asphericity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) calculated from alpha-carbon coordinate covariance eigenvalues in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_asphericity"
+       - Data type: number
+       - Description: The field 'mutant_asphericity' indicates the asphericity ('asphericity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) calculated from alpha-carbon coordinate covariance eigenvalues in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_asphericity"
+       - Data type: number
+       - Description: The field 'difference_asphericity' indicates the difference between the mutant value and the wild-type value for the asphericity ('asphericity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) calculated from alpha-carbon coordinate covariance eigenvalues.
+
+     - "wild_type_spherocity"
+       - Data type: number
+       - Description: The field 'wild_type_spherocity' indicates the spherocity ('spherocity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) calculated from alpha-carbon coordinate covariance eigenvalues in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_spherocity"
+       - Data type: number
+       - Description: The field 'mutant_spherocity' indicates the spherocity ('spherocity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) calculated from alpha-carbon coordinate covariance eigenvalues in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_spherocity"
+       - Data type: number
+       - Description: The field 'difference_spherocity' indicates the difference between the mutant value and the wild-type value for the spherocity ('spherocity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) calculated from alpha-carbon coordinate covariance eigenvalues.
+
+     - "wild_type_principal_moment_ratio"
+       - Data type: number
+       - Description: The field 'wild_type_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments ('moment of inertia': https://goldbook.iupac.org/terms/view/M04006) calculated from alpha-carbon coordinate covariance eigenvalues in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_principal_moment_ratio"
+       - Data type: number
+       - Description: The field 'mutant_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments ('moment of inertia': https://goldbook.iupac.org/terms/view/M04006) calculated from alpha-carbon coordinate covariance eigenvalues in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_principal_moment_ratio"
+       - Data type: number
+       - Description: The field 'difference_principal_moment_ratio' indicates the difference between the mutant value and the wild-type value for the ratio of the largest to the smallest principal moments ('moment of inertia': https://goldbook.iupac.org/terms/view/M04006) calculated from alpha-carbon coordinate covariance eigenvalues.
+
+     - "wild_type_bounding_box_volume"
+       - Data type: number
+       - Description: The field 'wild_type_bounding_box_volume' indicates the volume ('volume': http://purl.obolibrary.org/obo/PATO_0000918) of the axis-aligned bounding box ('bounding box': https://developer.mozilla.org/en-US/docs/Glossary/Bounding_box) enclosing all residue alpha-carbon coordinates in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_bounding_box_volume"
+       - Data type: number
+       - Description: The field 'mutant_bounding_box_volume' indicates the volume ('volume': http://purl.obolibrary.org/obo/PATO_0000918) of the axis-aligned bounding box ('bounding box': https://developer.mozilla.org/en-US/docs/Glossary/Bounding_box) enclosing all residue alpha-carbon coordinates in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_bounding_box_volume"
+       - Data type: number
+       - Description: The field 'difference_bounding_box_volume' indicates the difference between the mutant value and the wild-type value for the volume ('volume': http://purl.obolibrary.org/obo/PATO_0000918) of the axis-aligned bounding box ('bounding box': https://developer.mozilla.org/en-US/docs/Glossary/Bounding_box) enclosing all residue alpha-carbon coordinates.
+
+     - "wild_type_mean_pairwise_ca_distance"
+       - Data type: number
+       - Description: The field 'wild_type_mean_pairwise_ca_distance' indicates the mean pairwise alpha-carbon distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) between residue alpha-carbon coordinates in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_mean_pairwise_ca_distance"
+       - Data type: number
+       - Description: The field 'mutant_mean_pairwise_ca_distance' indicates the mean pairwise alpha-carbon distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) between residue alpha-carbon coordinates in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_mean_pairwise_ca_distance"
+       - Data type: number
+       - Description: The field 'difference_mean_pairwise_ca_distance' indicates the difference between the mutant value and the wild-type value for the mean pairwise alpha-carbon distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) between residue alpha-carbon coordinates.
+
+     - "wild_type_std_pairwise_ca_distance"
+       - Data type: number
+       - Description: The field 'wild_type_std_pairwise_ca_distance' indicates the standard deviation ('standard deviation': http://purl.obolibrary.org/obo/STATO_0000237) of pairwise alpha-carbon distances ('distance': http://purl.obolibrary.org/obo/PATO_0000040) between residue alpha-carbon coordinates in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_std_pairwise_ca_distance"
+       - Data type: number
+       - Description: The field 'mutant_std_pairwise_ca_distance' indicates the standard deviation ('standard deviation': http://purl.obolibrary.org/obo/STATO_0000237) of pairwise alpha-carbon distances ('distance': http://purl.obolibrary.org/obo/PATO_0000040) between residue alpha-carbon coordinates in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_std_pairwise_ca_distance"
+       - Data type: number
+       - Description: The field 'difference_std_pairwise_ca_distance' indicates the difference between the mutant value and the wild-type value for the standard deviation ('standard deviation': http://purl.obolibrary.org/obo/STATO_0000237) of pairwise alpha-carbon distances ('distance': http://purl.obolibrary.org/obo/PATO_0000040) between residue alpha-carbon coordinates.
+
      - "wild_type_residue_name_count"
        - Data type: array
        - Description: The field 'wild_type_residue_name_count' indicates the count ('count': http://purl.obolibrary.org/obo/STATO_0000047) of residue names ('residue': http://purl.obolibrary.org/obo/GENO_0000782; 'name': http://xmlns.com/foaf/0.1/name) in the wild-type protein structure ('wild-type': http://purl.obolibrary.org/obo/FBcv_0000348; 'protein structure': http://edamontology.org/data_1537), represented in the order of one-letter codes ('one-letter code': https://iupac.qmul.ac.uk/AminoAcid/A2021.html).
@@ -446,13 +590,67 @@ The program outputs the following files into the output directories:
 
      The "amino_acid_substitution_properties" object may contain:
 
-     - "wild_type_residue_name"
-       - Data type: string
-       - Description: The field 'wild_type_residue_name' indicates the name ('name': http://xmlns.com/foaf/0.1/name) of the wild-type residue ('wild-type': http://purl.obolibrary.org/obo/FBcv_0000348; 'residue': http://purl.obolibrary.org/obo/GENO_0000782) at the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606), using one-letter code ('one-letter code': https://iupac.qmul.ac.uk/AminoAcid/A2021.html) to represent.
+     - "wild_type_mutation_site_distance_to_centroid"
+       - Data type: number
+       - Description: The field 'wild_type_mutation_site_distance_to_centroid' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the protein alpha-carbon centroid ('centroid': https://xlinux.nist.gov/dads/HTML/centroid.html) in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
 
-     - "mutant_residue_name"
-       - Data type: string
-       - Description: The field 'mutant_residue_name' indicates the name ('name': http://xmlns.com/foaf/0.1/name) of the mutant residue ('mutant': https://ontobee.org/ontology/GENO?iri=http://purl.obolibrary.org/obo/GENO_0000480; 'residue': http://purl.obolibrary.org/obo/GENO_0000782) at the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606), using one-letter code ('one-letter code': https://iupac.qmul.ac.uk/AminoAcid/A2021.html) to represent.
+     - "mutant_mutation_site_distance_to_centroid"
+       - Data type: number
+       - Description: The field 'mutant_mutation_site_distance_to_centroid' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the protein alpha-carbon centroid ('centroid': https://xlinux.nist.gov/dads/HTML/centroid.html) in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_mutation_site_distance_to_centroid"
+       - Data type: number
+       - Description: The field 'difference_mutation_site_distance_to_centroid' indicates the difference between the mutant value and the wild-type value for the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the protein alpha-carbon centroid ('centroid': https://xlinux.nist.gov/dads/HTML/centroid.html).
+
+     - "wild_type_mutation_site_distance_to_nearest_binding_pocket"
+       - Data type: number
+       - Description: The field 'wild_type_mutation_site_distance_to_nearest_binding_pocket' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest binding-pocket residue alpha-carbon coordinate ('binding pocket': https://schlessinger-lab.github.io/pyvol/pocket_specification.html) in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_mutation_site_distance_to_nearest_binding_pocket"
+       - Data type: number
+       - Description: The field 'mutant_mutation_site_distance_to_nearest_binding_pocket' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest binding-pocket residue alpha-carbon coordinate ('binding pocket': https://schlessinger-lab.github.io/pyvol/pocket_specification.html) in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_mutation_site_distance_to_nearest_binding_pocket"
+       - Data type: number
+       - Description: The field 'difference_mutation_site_distance_to_nearest_binding_pocket' indicates the difference between the mutant value and the wild-type value for the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest binding-pocket residue alpha-carbon coordinate ('binding pocket': https://schlessinger-lab.github.io/pyvol/pocket_specification.html).
+
+     - "wild_type_mutation_site_distance_to_nearest_hydrophobic_cluster"
+       - Data type: number
+       - Description: The field 'wild_type_mutation_site_distance_to_nearest_hydrophobic_cluster' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest hydrophobic-cluster residue alpha-carbon coordinate ('hydrophobic cluster': https://proteintools.uni-bayreuth.de/clusters/) in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_mutation_site_distance_to_nearest_hydrophobic_cluster"
+       - Data type: number
+       - Description: The field 'mutant_mutation_site_distance_to_nearest_hydrophobic_cluster' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest hydrophobic-cluster residue alpha-carbon coordinate ('hydrophobic cluster': https://proteintools.uni-bayreuth.de/clusters/) in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_mutation_site_distance_to_nearest_hydrophobic_cluster"
+       - Data type: number
+       - Description: The field 'difference_mutation_site_distance_to_nearest_hydrophobic_cluster' indicates the difference between the mutant value and the wild-type value for the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest hydrophobic-cluster residue alpha-carbon coordinate ('hydrophobic cluster': https://proteintools.uni-bayreuth.de/clusters/).
+
+     - "wild_type_mutation_site_distance_to_nearest_disordered_region"
+       - Data type: number
+       - Description: The field 'wild_type_mutation_site_distance_to_nearest_disordered_region' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest disordered-region residue alpha-carbon coordinate ('intrinsically disordered region': https://disprot.org/ontology) in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_mutation_site_distance_to_nearest_disordered_region"
+       - Data type: number
+       - Description: The field 'mutant_mutation_site_distance_to_nearest_disordered_region' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest disordered-region residue alpha-carbon coordinate ('intrinsically disordered region': https://disprot.org/ontology) in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_mutation_site_distance_to_nearest_disordered_region"
+       - Data type: number
+       - Description: The field 'difference_mutation_site_distance_to_nearest_disordered_region' indicates the difference between the mutant value and the wild-type value for the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest disordered-region residue alpha-carbon coordinate ('intrinsically disordered region': https://disprot.org/ontology).
+
+     - "wild_type_mutation_site_distance_to_nearest_substrate"
+       - Data type: number
+       - Description: The field 'wild_type_mutation_site_distance_to_nearest_substrate' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest docked substrate center coordinate ('substrate': https://purl.dsmz.de/schema/Substrate; 'docking': https://goldbook.iupac.org/terms/view/11437) in the wild-type protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "mutant_mutation_site_distance_to_nearest_substrate"
+       - Data type: number
+       - Description: The field 'mutant_mutation_site_distance_to_nearest_substrate' indicates the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest docked substrate center coordinate ('substrate': https://purl.dsmz.de/schema/Substrate; 'docking': https://goldbook.iupac.org/terms/view/11437) in the mutant protein structure ('protein structure': http://edamontology.org/data_1537).
+
+     - "difference_mutation_site_distance_to_nearest_substrate"
+       - Data type: number
+       - Description: The field 'difference_mutation_site_distance_to_nearest_substrate' indicates the difference between the mutant value and the wild-type value for the distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) from the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) to the nearest docked substrate center coordinate ('substrate': https://purl.dsmz.de/schema/Substrate; 'docking': https://goldbook.iupac.org/terms/view/11437).
+
+
 
      - "wild_type_residue_name_one_hot_encoding"
        - Data type: array
@@ -486,13 +684,7 @@ The program outputs the following files into the output directories:
        - Data type: array
        - Description: The field 'difference_residue_chemical_classification_one_hot_encoding' indicates the difference between the mutant one-hot encoding and the wild-type one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the chemical classification ('classification': http://purl.obolibrary.org/obo/NCIT_C25161) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) at the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606).
 
-     - "wild_type_residue_secondary_structure"
-       - Data type: string
-       - Description: The field 'wild_type_residue_secondary_structure' indicates the secondary structure ('secondary structure': http://edamontology.org/operation_1847) assigned to the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782), using DSSP secondary-structure codes ('DSSP': https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html) at the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) in the wild-type protein structure.
 
-     - "mutant_residue_secondary_structure"
-       - Data type: string
-       - Description: The field 'mutant_residue_secondary_structure' indicates the secondary structure ('secondary structure': http://edamontology.org/operation_1847) assigned to the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782), using DSSP secondary-structure codes ('DSSP': https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html) at the amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606) in the mutant protein structure.
 
      - "wild_type_residue_secondary_structure_one_hot_encoding"
        - Data type: array
@@ -881,11 +1073,11 @@ The program outputs the following files into the output directories:
 
      - "substrate_structure_spherocity"
        - Data type: number
-       - Description: The field 'substrate_structure_spherocity' indicates the spherocity index ('spherocity index': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html).
+       - Description: The field 'substrate_structure_spherocity' indicates the spherocity ('spherocity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html).
 
      - "substrate_structure_principal_moment_ratio"
        - Data type: number
-       - Description: The field 'substrate_structure_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments of inertia ('moment of inertia': https://goldbook.iupac.org/terms/view/M03954) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate).
+       - Description: The field 'substrate_structure_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments of inertia ('moment of inertia': https://goldbook.iupac.org/terms/view/M04006) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate).
 
      - "substrate_structure_radius_of_gyration"
        - Data type: number
@@ -1110,11 +1302,11 @@ The program outputs the following files into the output directories:
 
    - "substrate_structure_spherocity"
      - Data type: number
-     - Description: The field 'substrate_structure_spherocity' indicates the spherocity index ('spherocity index': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html).
+     - Description: The field 'substrate_structure_spherocity' indicates the spherocity ('spherocity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html).
 
    - "substrate_structure_principal_moment_ratio"
      - Data type: number
-     - Description: The field 'substrate_structure_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments of inertia ('moment of inertia': https://goldbook.iupac.org/terms/view/M03954) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate).
+     - Description: The field 'substrate_structure_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments of inertia ('moment of inertia': https://goldbook.iupac.org/terms/view/M04006) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate).
 
    - "substrate_structure_radius_of_gyration"
      - Data type: number
