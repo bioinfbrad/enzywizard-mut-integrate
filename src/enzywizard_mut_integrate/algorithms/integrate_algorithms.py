@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Tuple
 
 from ..utils.logging_utils import Logger
-from ..utils.integrate_utils import INTERACTION_ORDER,aa_class_statistics_to_list,aa_name_statistics_to_list,aa_ss_statistics_to_list,build_lookup_by_residue,build_protein_derived_statistics,get_clean_new_residue_list,get_disorder_membership_set,get_hydrophobic_cluster_membership_set,get_pocket_membership_set,interaction_one_hot,node_type_one_hot,residue_key,substrate_key
+from ..utils.integrate_utils import AA_CLASS_COUNT_FIELD_MAPPING,AA_NAME_COUNT_FIELD_MAPPING,AA_SS_COUNT_FIELD_MAPPING,INTERACTION_ORDER,add_count_statistics_to_overall,build_lookup_by_residue,build_protein_derived_statistics,get_clean_new_residue_list,get_disorder_membership_set,get_hydrophobic_cluster_membership_set,get_pocket_membership_set,interaction_one_hot,node_type_one_hot,residue_key,substrate_key
 from ..utils.sequence_utils import normalize_aa_name_to_one_letter
 
 
@@ -92,30 +92,32 @@ def build_overall_statistics(report_dict: Dict[str, Dict[str, Any]],strict: bool
     if aaprops_report is not None:
         stats = aaprops_report.get("residue_properties_statistics", {})
 
-        residue_name_count = aa_name_statistics_to_list(
+        if not add_count_statistics_to_overall(
+            overall_statistics,
             stats.get("residue_name_statistics"),
+            AA_NAME_COUNT_FIELD_MAPPING,
+            "residue_name_statistics",
             logger,
-        )
-        if residue_name_count is None:
+        ):
             return None
 
-        residue_class_count = aa_class_statistics_to_list(
+        if not add_count_statistics_to_overall(
+            overall_statistics,
             stats.get("residue_chemical_classification_statistics"),
+            AA_CLASS_COUNT_FIELD_MAPPING,
+            "residue_chemical_classification_statistics",
             logger,
-        )
-        if residue_class_count is None:
+        ):
             return None
 
-        residue_ss_count = aa_ss_statistics_to_list(
+        if not add_count_statistics_to_overall(
+            overall_statistics,
             stats.get("residue_secondary_structure_statistics"),
+            AA_SS_COUNT_FIELD_MAPPING,
+            "residue_secondary_structure_statistics",
             logger,
-        )
-        if residue_ss_count is None:
+        ):
             return None
-
-        overall_statistics["residue_name_count"] = residue_name_count
-        overall_statistics["residue_chemical_classification_count"] = residue_class_count
-        overall_statistics["residue_secondary_structure_count"] = residue_ss_count
     elif strict:
         logger.print("[ERROR] enzywizard_aaprops is required in strict mode.")
         return None
@@ -169,7 +171,7 @@ def build_overall_statistics(report_dict: Dict[str, Dict[str, Any]],strict: bool
         return None
 
     if interaction_report is not None:
-        count_block = interaction_report["molecular_interaction_statistics"]["overall_molecular_interaction_statistics"]["interaction_count"]
+        count_block = interaction_report["molecular_interaction_statistics"]["overall_molecular_interaction_statistics"]
 
         overall_statistics["hydrogen_bond_count"] = count_block["hydrogen_bond_count"]
         overall_statistics["ionic_bond_count"] = count_block["ionic_bond_count"]
@@ -348,7 +350,7 @@ def build_residue_nodes(report_dict: Dict[str, Dict[str, Any]],strict: bool,logg
             else:
                 node["residue_alpha_carbon_coordinate"] = aa_item["residue_alpha_carbon_coordinate"]
                 node["residue_chemical_classification"] = aa_item["residue_chemical_classification"]
-                node["residue_chemical_classification_one_hot_encoding"] = aa_item["residue_chemical_classification_one_hot_encoding"]
+                node["residue_chemical_classification_multi_hot_encoding"] = aa_item["residue_chemical_classification_multi_hot_encoding"]
                 node["residue_secondary_structure"] = aa_item["residue_secondary_structure"]
                 node["residue_secondary_structure_one_hot_encoding"] = aa_item["residue_secondary_structure_one_hot_encoding"]
                 node["residue_relative_solvent_accessibility"] = aa_item["residue_relative_solvent_accessibility"]
@@ -635,7 +637,7 @@ def reorder_residue_node(node: Dict[str, Any]) -> Dict[str, Any]:
         "residue_name_one_hot_encoding",
         "residue_alpha_carbon_coordinate",
         "residue_chemical_classification",
-        "residue_chemical_classification_one_hot_encoding",
+        "residue_chemical_classification_multi_hot_encoding",
         "residue_secondary_structure",
         "residue_secondary_structure_one_hot_encoding",
         "residue_relative_solvent_accessibility",

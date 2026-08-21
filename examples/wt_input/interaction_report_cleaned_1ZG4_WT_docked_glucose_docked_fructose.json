@@ -6127,58 +6127,28 @@
   ],
   "molecular_interaction_statistics": {
     "overall_molecular_interaction_statistics": {
-      "interaction_count": {
-        "hydrogen_bond_count": 243,
-        "ionic_bond_count": 5,
-        "van_der_waals_contact_count": 216,
-        "pi_pi_stacking_count": 4,
-        "pi_cation_interaction_count": 2,
-        "disulfide_bond_count": 1
-      },
-      "unique_pair_interaction_count": {
-        "hydrogen_bond_count": 213,
-        "ionic_bond_count": 5,
-        "van_der_waals_contact_count": 190,
-        "pi_pi_stacking_count": 4,
-        "pi_cation_interaction_count": 2,
-        "disulfide_bond_count": 1
-      }
+      "hydrogen_bond_count": 243,
+      "ionic_bond_count": 5,
+      "van_der_waals_contact_count": 216,
+      "pi_pi_stacking_count": 4,
+      "pi_cation_interaction_count": 2,
+      "disulfide_bond_count": 1
     },
     "intra_enzyme_interaction_statistics": {
-      "interaction_count": {
-        "hydrogen_bond_count": 239,
-        "ionic_bond_count": 5,
-        "van_der_waals_contact_count": 210,
-        "pi_pi_stacking_count": 4,
-        "pi_cation_interaction_count": 2,
-        "disulfide_bond_count": 1
-      },
-      "unique_pair_interaction_count": {
-        "hydrogen_bond_count": 209,
-        "ionic_bond_count": 5,
-        "van_der_waals_contact_count": 184,
-        "pi_pi_stacking_count": 4,
-        "pi_cation_interaction_count": 2,
-        "disulfide_bond_count": 1
-      }
+      "hydrogen_bond_count": 239,
+      "ionic_bond_count": 5,
+      "van_der_waals_contact_count": 210,
+      "pi_pi_stacking_count": 4,
+      "pi_cation_interaction_count": 2,
+      "disulfide_bond_count": 1
     },
     "enzyme_substrate_interaction_statistics": {
-      "interaction_count": {
-        "hydrogen_bond_count": 4,
-        "ionic_bond_count": 0,
-        "van_der_waals_contact_count": 6,
-        "pi_pi_stacking_count": 0,
-        "pi_cation_interaction_count": 0,
-        "disulfide_bond_count": 0
-      },
-      "unique_pair_interaction_count": {
-        "hydrogen_bond_count": 4,
-        "ionic_bond_count": 0,
-        "van_der_waals_contact_count": 6,
-        "pi_pi_stacking_count": 0,
-        "pi_cation_interaction_count": 0,
-        "disulfide_bond_count": 0
-      }
+      "hydrogen_bond_count": 4,
+      "ionic_bond_count": 0,
+      "van_der_waals_contact_count": 6,
+      "pi_pi_stacking_count": 0,
+      "pi_cation_interaction_count": 0,
+      "disulfide_bond_count": 0
     }
   }
 }

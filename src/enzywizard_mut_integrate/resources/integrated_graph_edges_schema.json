@@ -30,11 +30,13 @@
                 0,
                 1
               ]
-            }
+            },
+            "minItems": 6,
+            "maxItems": 6
           },
           "interaction_count": {
             "type": "integer",
-            "description": "The field 'interaction_count' indicates the count ('count': http://purl.obolibrary.org/obo/STATO_0000047) of molecular interactions ('molecular interaction': https://bioportal.bioontology.org/ontologies/MI) between the source node and the target node."
+            "description": "The field 'interaction_count' indicates the count of molecular interactions ('molecular interaction': https://bioportal.bioontology.org/ontologies/MI) between the source node and the target node."
           }
         },
         "required": [

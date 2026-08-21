@@ -26,10 +26,17 @@ def run_mut_integrate_service(mutclean_report_path: str | Path,wt_input_dir: str
     wt_output_dir = Path(wt_output_dir)
     mut_output_dir = Path(mut_output_dir)
 
-    wt_output_dir.mkdir(parents=True, exist_ok=True)
-    mut_output_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        wt_output_dir.mkdir(parents=True, exist_ok=True)
+        mut_output_dir.mkdir(parents=True, exist_ok=True)
+        logger = Logger(wt_output_dir)
+    except Exception as e:
+        print(
+            f"[ERROR] Failed to initialize mut-integrate output directories or log file: "
+            f"wt_output_dir={wt_output_dir}, mut_output_dir={mut_output_dir}. Reason: {e}"
+        )
+        return False
 
-    logger = Logger(wt_output_dir)
     logger.print(
         f"[INFO] Mut_integrate processing started: "
         f"mut_clean_report={mutclean_report_path}, "
@@ -54,7 +61,14 @@ def run_mut_integrate_service(mutclean_report_path: str | Path,wt_input_dir: str
         logger.print(f"[ERROR] Invalid mut_input_dir: {mut_input_dir}")
         return False
 
-    if wt_output_dir.resolve() == mut_output_dir.resolve():
+    try:
+        wt_output_dir_resolved = wt_output_dir.resolve()
+        mut_output_dir_resolved = mut_output_dir.resolve()
+    except Exception as e:
+        logger.print(f"[ERROR] Failed to resolve output directories. Reason: {e}")
+        return False
+
+    if wt_output_dir_resolved == mut_output_dir_resolved:
         logger.print("[ERROR] wt_output_dir and mut_output_dir must be different directories.")
         return False
 
@@ -86,8 +100,13 @@ def run_mut_integrate_service(mutclean_report_path: str | Path,wt_input_dir: str
     if mut_json_path_list is None:
         return False
 
-    wt_unique_json_path_set = set([p.resolve() for p in wt_json_path_list])
-    mut_unique_json_path_set = set([p.resolve() for p in mut_json_path_list])
+    try:
+        mutclean_report_resolved_path = mutclean_report_path.resolve()
+        wt_unique_json_path_set = set([p.resolve() for p in wt_json_path_list])
+        mut_unique_json_path_set = set([p.resolve() for p in mut_json_path_list])
+    except Exception as e:
+        logger.print(f"[ERROR] Failed to resolve input JSON report paths. Reason: {e}")
+        return False
 
     if len(wt_unique_json_path_set) > 12:
         logger.print(f"[ERROR] Number of JSON files in wt_input_dir exceeds 12 (maximum allowed report types): {len(wt_unique_json_path_set)}")
@@ -101,7 +120,13 @@ def run_mut_integrate_service(mutclean_report_path: str | Path,wt_input_dir: str
     mut_report_dict: Dict[str, Dict[str, Any]] = {}
 
     for json_path in wt_json_path_list:
-        if json_path.resolve() == mutclean_report_path.resolve():
+        try:
+            json_resolved_path = json_path.resolve()
+        except Exception as e:
+            logger.print(f"[ERROR] Failed to resolve WT input JSON report path: {json_path}. Reason: {e}")
+            return False
+
+        if json_resolved_path == mutclean_report_resolved_path:
             continue
 
         data = load_json_file(json_path, logger)
@@ -129,7 +154,13 @@ def run_mut_integrate_service(mutclean_report_path: str | Path,wt_input_dir: str
         logger.print(f"[INFO] Loaded wt report: {json_path.name} ({report_type})")
 
     for json_path in mut_json_path_list:
-        if json_path.resolve() == mutclean_report_path.resolve():
+        try:
+            json_resolved_path = json_path.resolve()
+        except Exception as e:
+            logger.print(f"[ERROR] Failed to resolve MUT input JSON report path: {json_path}. Reason: {e}")
+            return False
+
+        if json_resolved_path == mutclean_report_resolved_path:
             continue
 
         data = load_json_file(json_path, logger)

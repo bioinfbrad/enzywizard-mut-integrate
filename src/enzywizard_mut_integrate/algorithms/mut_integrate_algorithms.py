@@ -4,7 +4,7 @@ import math
 from typing import Any, Dict, List, Tuple
 
 from ..utils.logging_utils import Logger
-from ..utils.integrate_utils import build_lookup_by_residue,get_clean_new_residue_list
+from ..utils.integrate_utils import AA_CLASS_COUNT_FIELD_MAPPING,AA_NAME_COUNT_FIELD_MAPPING,AA_SS_COUNT_FIELD_MAPPING,build_lookup_by_residue,get_clean_new_residue_list
 
 from ..utils.mut_clean_utils import check_amino_acid_substitution, get_muts_from_aas
 from ..utils.mut_integrate_utils import build_mutation_site_distance_features,synthesize_clean_report_from_mutclean
@@ -221,9 +221,11 @@ def reorder_mutation_site_features(data: Dict[str, Any]) -> Dict[str, Any]:
     ordered: Dict[str, Any] = {}
 
     field_order = [
+        "residue_name",
         "residue_name_one_hot_encoding",
         "residue_chemical_classification",
-        "residue_chemical_classification_one_hot_encoding",
+        "residue_chemical_classification_multi_hot_encoding",
+        "residue_secondary_structure",
         "residue_secondary_structure_one_hot_encoding",
         "residue_relative_solvent_accessibility",
         "residue_backbone_phi_angle",
@@ -411,8 +413,8 @@ def build_mutation_site_features(
     wt_residue_name_one_hot_list: List[List[float]] = []
     mut_residue_name_one_hot_list: List[List[float]] = []
 
-    wt_residue_class_one_hot_list: List[List[float]] = []
-    mut_residue_class_one_hot_list: List[List[float]] = []
+    wt_residue_class_multi_hot_list: List[List[float]] = []
+    mut_residue_class_multi_hot_list: List[List[float]] = []
 
     wt_residue_ss_one_hot_list: List[List[float]] = []
     mut_residue_ss_one_hot_list: List[List[float]] = []
@@ -452,7 +454,7 @@ def build_mutation_site_features(
             wt_molecular_weight_list.append(float(wt_item["residue_molecular_weight"]))
             wt_pi_list.append(float(wt_item["residue_isoelectric_point"]))
             wt_residue_name_one_hot_list.append([float(x) for x in wt_item["residue_name_one_hot_encoding"]])
-            wt_residue_class_one_hot_list.append([float(x) for x in wt_item["residue_chemical_classification_one_hot_encoding"]])
+            wt_residue_class_multi_hot_list.append([float(x) for x in wt_item["residue_chemical_classification_multi_hot_encoding"]])
             wt_residue_ss_one_hot_list.append([float(x) for x in wt_item["residue_secondary_structure_one_hot_encoding"]])
 
         if mut_aaprops_lookup is not None:
@@ -472,7 +474,7 @@ def build_mutation_site_features(
             mut_molecular_weight_list.append(float(mut_item["residue_molecular_weight"]))
             mut_pi_list.append(float(mut_item["residue_isoelectric_point"]))
             mut_residue_name_one_hot_list.append([float(x) for x in mut_item["residue_name_one_hot_encoding"]])
-            mut_residue_class_one_hot_list.append([float(x) for x in mut_item["residue_chemical_classification_one_hot_encoding"]])
+            mut_residue_class_multi_hot_list.append([float(x) for x in mut_item["residue_chemical_classification_multi_hot_encoding"]])
             mut_residue_ss_one_hot_list.append([float(x) for x in mut_item["residue_secondary_structure_one_hot_encoding"]])
 
         if wt_flexibility_lookup is not None:
@@ -503,10 +505,18 @@ def build_mutation_site_features(
                 return None
             mut_conservation_score_list.append(float(mut_cons_item["normalized_shannon_information_content"]))
 
+    if len(wt_name_list) > 0:
+        result["wild_type_residue_name"] = ";".join(wt_name_list)
+    if len(mut_name_list) > 0:
+        result["mutant_residue_name"] = ";".join(mut_name_list)
     if len(wt_class_list) > 0:
         result["wild_type_residue_chemical_classification"] = ";".join(wt_class_list)
     if len(mut_class_list) > 0:
         result["mutant_residue_chemical_classification"] = ";".join(mut_class_list)
+    if len(wt_ss_list) > 0:
+        result["wild_type_residue_secondary_structure"] = ";".join(wt_ss_list)
+    if len(mut_ss_list) > 0:
+        result["mutant_residue_secondary_structure"] = ";".join(mut_ss_list)
 
     _write_mutation_numeric_triplet(result, "residue_relative_solvent_accessibility", wt_rsa_list, mut_rsa_list)
     _write_mutation_angle_triplet(result, "residue_backbone_phi_angle", wt_phi_list, mut_phi_list)
@@ -521,7 +531,7 @@ def build_mutation_site_features(
     _write_mutation_numeric_triplet(result, "residue_sequence_conservation_score", wt_conservation_score_list, mut_conservation_score_list)
 
     _write_mutation_vector_triplet(result, "residue_name_one_hot_encoding", wt_residue_name_one_hot_list, mut_residue_name_one_hot_list)
-    _write_mutation_vector_triplet(result, "residue_chemical_classification_one_hot_encoding", wt_residue_class_one_hot_list, mut_residue_class_one_hot_list)
+    _write_mutation_vector_triplet(result, "residue_chemical_classification_multi_hot_encoding", wt_residue_class_multi_hot_list, mut_residue_class_multi_hot_list)
     _write_mutation_vector_triplet(result, "residue_secondary_structure_one_hot_encoding", wt_residue_ss_one_hot_list, mut_residue_ss_one_hot_list)
 
     distance_features = build_mutation_site_distance_features(
@@ -560,9 +570,9 @@ def reorder_mut_overall_statistics(
         "bounding_box_volume",
         "mean_pairwise_ca_distance",
         "std_pairwise_ca_distance",
-        "residue_name_count",
-        "residue_chemical_classification_count",
-        "residue_secondary_structure_count",
+        *[output_field for _, output_field in AA_NAME_COUNT_FIELD_MAPPING],
+        *[output_field for _, output_field in AA_CLASS_COUNT_FIELD_MAPPING],
+        *[output_field for _, output_field in AA_SS_COUNT_FIELD_MAPPING],
         "hydrophobic_cluster_count",
         "max_hydrophobic_cluster_area",
         "total_hydrophobic_cluster_area",

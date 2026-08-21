@@ -33,50 +33,71 @@ NODE_TYPE_ORDER = ["residue", "substrate"]
 AA_CLASS_ORDER = [item[0] for item in AA_8CLASSES]
 AA_NAME_ORDER = [aa for aa, _ in sorted(AA_20NAME_INDEX.items(), key=lambda x: x[1])]
 AA_SS_ORDER = [ss for ss, _ in sorted(DSSP_8STATE_INDEX.items(), key=lambda x: x[1])]
-AA_NAME_COUNT_FIELD_ORDER = [
-    "alanine_count",
-    "cysteine_count",
-    "aspartic_acid_count",
-    "glutamic_acid_count",
-    "phenylalanine_count",
-    "glycine_count",
-    "histidine_count",
-    "isoleucine_count",
-    "lysine_count",
-    "leucine_count",
-    "methionine_count",
-    "asparagine_count",
-    "proline_count",
-    "glutamine_count",
-    "arginine_count",
-    "serine_count",
-    "threonine_count",
-    "valine_count",
-    "tryptophan_count",
-    "tyrosine_count",
+AA_NAME_COUNT_FIELD_MAPPING = [
+    ("alanine_count", "residue_name_alanine_count"),
+    ("cysteine_count", "residue_name_cysteine_count"),
+    ("aspartic_acid_count", "residue_name_aspartic_acid_count"),
+    ("glutamic_acid_count", "residue_name_glutamic_acid_count"),
+    ("phenylalanine_count", "residue_name_phenylalanine_count"),
+    ("glycine_count", "residue_name_glycine_count"),
+    ("histidine_count", "residue_name_histidine_count"),
+    ("isoleucine_count", "residue_name_isoleucine_count"),
+    ("lysine_count", "residue_name_lysine_count"),
+    ("leucine_count", "residue_name_leucine_count"),
+    ("methionine_count", "residue_name_methionine_count"),
+    ("asparagine_count", "residue_name_asparagine_count"),
+    ("proline_count", "residue_name_proline_count"),
+    ("glutamine_count", "residue_name_glutamine_count"),
+    ("arginine_count", "residue_name_arginine_count"),
+    ("serine_count", "residue_name_serine_count"),
+    ("threonine_count", "residue_name_threonine_count"),
+    ("valine_count", "residue_name_valine_count"),
+    ("tryptophan_count", "residue_name_tryptophan_count"),
+    ("tyrosine_count", "residue_name_tyrosine_count"),
 ]
 
-AA_CLASS_COUNT_FIELD_ORDER = [
-    "uncharged_polar_count",
-    "positively_charged_count",
-    "negatively_charged_count",
-    "hydrophobic_count",
-    "aromatic_count",
-    "aliphatic_count",
-    "heterocyclic_count",
-    "sulfur_containing_count",
+AA_CLASS_COUNT_FIELD_MAPPING = [
+    ("uncharged_polar_count", "residue_chemical_classification_uncharged_polar_count"),
+    ("positively_charged_count", "residue_chemical_classification_positively_charged_count"),
+    ("negatively_charged_count", "residue_chemical_classification_negatively_charged_count"),
+    ("hydrophobic_count", "residue_chemical_classification_hydrophobic_count"),
+    ("aromatic_count", "residue_chemical_classification_aromatic_count"),
+    ("aliphatic_count", "residue_chemical_classification_aliphatic_count"),
+    ("heterocyclic_count", "residue_chemical_classification_heterocyclic_count"),
+    ("sulfur_containing_count", "residue_chemical_classification_sulfur_containing_count"),
 ]
 
-AA_SS_COUNT_FIELD_ORDER = [
-    "unassigned_count",
-    "alpha_helix_count",
-    "beta_bridge_count",
-    "extended_strand_count",
-    "three_ten_helix_count",
-    "pi_helix_count",
-    "turn_count",
-    "bend_count",
+AA_SS_COUNT_FIELD_MAPPING = [
+    ("unassigned_count", "secondary_structure_unassigned_count"),
+    ("alpha_helix_count", "secondary_structure_alpha_helix_count"),
+    ("beta_bridge_count", "secondary_structure_beta_bridge_count"),
+    ("extended_strand_count", "secondary_structure_extended_strand_count"),
+    ("three_ten_helix_count", "secondary_structure_three_ten_helix_count"),
+    ("pi_helix_count", "secondary_structure_pi_helix_count"),
+    ("turn_count", "secondary_structure_turn_count"),
+    ("bend_count", "secondary_structure_bend_count"),
 ]
+
+
+def add_count_statistics_to_overall(
+    overall_statistics: Dict[str, Any],
+    statistics: Any,
+    field_mapping: List[Tuple[str, str]],
+    statistics_name: str,
+    logger: Logger,
+) -> bool:
+    if not isinstance(statistics, dict):
+        logger.print(f"[ERROR] {statistics_name} must be a dict.")
+        return False
+
+    for source_field, output_field in field_mapping:
+        value = statistics.get(source_field)
+        if not isinstance(value, int):
+            logger.print(f"[ERROR] Missing or invalid {statistics_name} field: {source_field}.")
+            return False
+        overall_statistics[output_field] = value
+
+    return True
 
 
 def load_json_file(path: str | Path, logger: Logger) -> Dict[str, Any] | None:
@@ -263,59 +284,6 @@ def node_type_one_hot(node_type: str) -> List[int]:
     if node_type in NODE_TYPE_ORDER:
         vec[NODE_TYPE_ORDER.index(node_type)] = 1
     return vec
-
-
-def aa_name_statistics_to_list(statistics: Dict[str, int], logger: Logger) -> List[int] | None:
-    if not isinstance(statistics, dict):
-        logger.print("[ERROR] residue_name_statistics must be a dict.")
-        return None
-
-    out: List[int] = []
-    for field in AA_NAME_COUNT_FIELD_ORDER:
-        value = statistics.get(field)
-        if not isinstance(value, int):
-            logger.print(f"[ERROR] Missing or invalid residue_name_statistics field: {field}.")
-            return None
-        out.append(value)
-
-    return out
-
-
-def aa_class_statistics_to_list(statistics: Dict[str, int], logger: Logger) -> List[int] | None:
-    if not isinstance(statistics, dict):
-        logger.print("[ERROR] residue_chemical_classification_statistics must be a dict.")
-        return None
-
-    out: List[int] = []
-    for field in AA_CLASS_COUNT_FIELD_ORDER:
-        value = statistics.get(field)
-        if not isinstance(value, int):
-            logger.print(
-                f"[ERROR] Missing or invalid residue_chemical_classification_statistics field: {field}."
-            )
-            return None
-        out.append(value)
-
-    return out
-
-
-def aa_ss_statistics_to_list(statistics: Dict[str, int], logger: Logger) -> List[int] | None:
-    if not isinstance(statistics, dict):
-        logger.print("[ERROR] residue_secondary_structure_statistics must be a dict.")
-        return None
-
-    out: List[int] = []
-    for field in AA_SS_COUNT_FIELD_ORDER:
-        value = statistics.get(field)
-        if not isinstance(value, int):
-            logger.print(
-                f"[ERROR] Missing or invalid residue_secondary_structure_statistics field: {field}."
-            )
-            return None
-        out.append(value)
-
-    return out
-
 
 
 def residue_key(aa_id: int, aa_name: str) -> Tuple[int, str]:
@@ -552,10 +520,18 @@ def _is_number_list(x: Any, min_len: int | None = None) -> bool:
     return all(_is_number(v) for v in x)
 
 
+def _is_number_list_with_len(x: Any, expected_len: int) -> bool:
+    return isinstance(x, list) and len(x) == expected_len and all(_is_number(v) for v in x)
+
+
 def _is_int01_list(x: Any) -> bool:
     if not isinstance(x, list):
         return False
     return all(isinstance(v, int) and v in {0, 1} for v in x)
+
+
+def _is_int01_list_with_len(x: Any, expected_len: int) -> bool:
+    return isinstance(x, list) and len(x) == expected_len and _is_int01_list(x)
 
 
 def _validate_residue_index_name(item: Dict[str, Any], logger: Logger) -> bool:
@@ -662,12 +638,15 @@ def validate_aaprops_report(data: Dict[str, Any], logger: Logger) -> bool:
 
         for key in [
             "residue_name_one_hot_encoding",
-            "residue_chemical_classification_one_hot_encoding",
             "residue_secondary_structure_one_hot_encoding",
         ]:
             if not _is_int01_list(item.get(key)):
-                logger.print(f"[ERROR] Invalid one-hot field: {key}")
+                logger.print(f"[ERROR] Invalid encoding field: {key}")
                 return False
+
+        if not _is_int01_list_with_len(item.get("residue_chemical_classification_multi_hot_encoding"), 8):
+            logger.print("[ERROR] Invalid encoding field: residue_chemical_classification_multi_hot_encoding")
+            return False
 
         for key in [
             "residue_relative_solvent_accessibility",
@@ -1042,13 +1021,6 @@ def validate_dock_report(data: Dict[str, Any], logger: Logger) -> bool:
         return False
 
     result = data.get("enzyme_substrate_docking_result")
-    if result == {}:
-        logger.print(
-            "[ERROR] Dock report has no docking results. "
-            "Please re-run mut-integrate in non-strict mode without passing the dock report."
-        )
-        return False
-
     if not isinstance(result, dict):
         logger.print("[ERROR] Invalid enzyme_substrate_docking_result.")
         return False
@@ -1062,16 +1034,16 @@ def validate_dock_report(data: Dict[str, Any], logger: Logger) -> bool:
         logger.print("[ERROR] Invalid enzyme_substrate_binding_affinity.")
         return False
 
-    if not _is_number_list(result.get("docking_box_center_coordinate"), min_len=3):
+    if not _is_number_list_with_len(result.get("docking_box_center_coordinate"), 3):
         logger.print("[ERROR] Invalid docking_box_center_coordinate.")
         return False
 
-    if not _is_number_list(result.get("docking_box_size"), min_len=3):
+    if not _is_number_list_with_len(result.get("docking_box_size"), 3):
         logger.print("[ERROR] Invalid docking_box_size.")
         return False
 
     docked_substrates = result.get("docked_substrates")
-    if not isinstance(docked_substrates, list):
+    if not isinstance(docked_substrates, list) or len(docked_substrates) == 0:
         logger.print("[ERROR] Invalid docked_substrates.")
         return False
 
@@ -1085,7 +1057,7 @@ def validate_dock_report(data: Dict[str, Any], logger: Logger) -> bool:
                 logger.print(f"[ERROR] Invalid docked substrate field: {key}")
                 return False
 
-        if not _is_number_list(item.get("docked_substrate_center_coordinate"), min_len=3):
+        if not _is_number_list_with_len(item.get("docked_substrate_center_coordinate"), 3):
             logger.print("[ERROR] Invalid docked_substrate_center_coordinate.")
             return False
 
@@ -1128,16 +1100,10 @@ def validate_interaction_report(data: Dict[str, Any], logger: Logger) -> bool:
             logger.print(f"[ERROR] Invalid interaction statistics block: {block_name}")
             return False
 
-        for sub_key in ["interaction_count", "unique_pair_interaction_count"]:
-            sub_block = block.get(sub_key)
-            if not isinstance(sub_block, dict):
-                logger.print(f"[ERROR] Invalid interaction statistics sub-block: {block_name}.{sub_key}")
+        for count_field in count_field_list:
+            if not isinstance(block.get(count_field), int):
+                logger.print(f"[ERROR] Invalid interaction statistic: {block_name}.{count_field}")
                 return False
-
-            for count_field in count_field_list:
-                if not isinstance(sub_block.get(count_field), int):
-                    logger.print(f"[ERROR] Invalid interaction statistic: {block_name}.{sub_key}.{count_field}")
-                    return False
 
     for item in interactions:
         if not isinstance(item, dict):

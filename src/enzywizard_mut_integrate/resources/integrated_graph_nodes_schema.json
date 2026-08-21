@@ -15,18 +15,20 @@
           "node_type": {
             "type": "string",
             "const": "residue",
-            "description": "The field 'node_type' indicates the type ('type': http://purl.org/dc/terms/type) of node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node), with value 'residue' indicating a residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'node_type' indicates the type of node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node), with value 'residue' indicating a residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
           },
           "node_type_one_hot_encoding": {
             "type": "array",
-            "description": "The field 'node_type_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the node type ('type': http://purl.org/dc/terms/type).",
+            "description": "The field 'node_type_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the node type.",
             "items": {
               "type": "integer",
               "enum": [
                 0,
                 1
               ]
-            }
+            },
+            "minItems": 2,
+            "maxItems": 2
           },
           "residue_index": {
             "type": "integer",
@@ -35,11 +37,13 @@
           "residue_name": {
             "type": "string",
             "pattern": "^[ACDEFGHIKLMNPQRSTVWY]$",
-            "description": "The field 'residue_name' indicates the name ('name': http://xmlns.com/foaf/0.1/name) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782), using one-letter code ('one-letter code': https://iupac.qmul.ac.uk/AminoAcid/A2021.html) to represent."
+            "description": "The field 'residue_name' indicates the name of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782), using one-letter code ('one-letter code': https://iupac.qmul.ac.uk/AminoAcid/A2021.html) to represent the amino acid residue."
           },
           "residue_name_one_hot_encoding": {
             "type": "array",
-            "description": "The field 'residue_name_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the residue name ('residue': http://purl.obolibrary.org/obo/GENO_0000782; 'name': http://xmlns.com/foaf/0.1/name).",
+            "description": "The field 'residue_name_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the residue name ('residue': http://purl.obolibrary.org/obo/GENO_0000782).",
+            "minItems": 20,
+            "maxItems": 20,
             "items": {
               "type": "integer",
               "enum": [
@@ -50,7 +54,9 @@
           },
           "residue_alpha_carbon_coordinate": {
             "type": "array",
-            "description": "The field 'residue_alpha_carbon_coordinate' indicates the three-dimensional coordinate ('coordinate': http://purl.obolibrary.org/obo/NCIT_C44477) of the alpha carbon atom ('alpha carbon': https://www.rcsb.org/docs/general-help/glossary; 'atom': http://purl.obolibrary.org/obo/CHMO_0001075) in the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782).",
+            "description": "The field 'residue_alpha_carbon_coordinate' indicates the three-dimensional coordinate ('coordinate': http://purl.obolibrary.org/obo/NCIT_C44477) of the alpha carbon atom ('alpha carbon': https://www.rcsb.org/docs/general-help/glossary; 'atom': http://purl.obolibrary.org/obo/CHMO_0001075) in the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782). Unit: angstroms (Å) ('angstrom': http://qudt.org/vocab/unit/ANGSTROM).",
+            "minItems": 3,
+            "maxItems": 3,
             "items": {
               "type": "number"
             }
@@ -60,9 +66,11 @@
             "pattern": "^(uncharged_polar|positively_charged|negatively_charged|hydrophobic|aromatic|aliphatic|heterocyclic|sulfur_containing)(/(uncharged_polar|positively_charged|negatively_charged|hydrophobic|aromatic|aliphatic|heterocyclic|sulfur_containing))*$",
             "description": "The field 'residue_chemical_classification' indicates the chemical classification ('classification': http://purl.obolibrary.org/obo/NCIT_C25161) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
           },
-          "residue_chemical_classification_one_hot_encoding": {
+          "residue_chemical_classification_multi_hot_encoding": {
             "type": "array",
-            "description": "The field 'residue_chemical_classification_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the chemical classification ('classification': http://purl.obolibrary.org/obo/NCIT_C25161) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782).",
+            "description": "The field 'residue_chemical_classification_multi_hot_encoding' indicates the multi-hot encoding ('multi-hot encoding': https://developers.google.com/machine-learning/crash-course/categorical-data/one-hot-encoding) of the chemical classification ('classification': http://purl.obolibrary.org/obo/NCIT_C25161) of the amino acid residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782).",
+            "minItems": 8,
+            "maxItems": 8,
             "items": {
               "type": "integer",
               "enum": [
@@ -88,6 +96,8 @@
           "residue_secondary_structure_one_hot_encoding": {
             "type": "array",
             "description": "The field 'residue_secondary_structure_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the residue secondary structure ('secondary structure': http://edamontology.org/operation_1847).",
+            "minItems": 8,
+            "maxItems": 8,
             "items": {
               "type": "integer",
               "enum": [
@@ -98,58 +108,71 @@
           },
           "residue_relative_solvent_accessibility": {
             "type": "number",
-            "description": "The field 'residue_relative_solvent_accessibility' indicates the relative solvent accessibility ('solvent accessibility': http://edamontology.org/data_1542) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'residue_relative_solvent_accessibility' indicates the relative solvent accessibility ('solvent accessibility': http://edamontology.org/data_1542) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782). Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "residue_backbone_phi_angle": {
             "type": "number",
-            "description": "The field 'residue_backbone_phi_angle' indicates the backbone phi torsion angle ('torsion angle': https://goldbook.iupac.org/terms/view/T06406) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) in the protein backbone ('protein backbone': http://edamontology.org/operation_1825)."
+            "description": "The field 'residue_backbone_phi_angle' indicates the backbone phi torsion angle ('torsion angle': https://goldbook.iupac.org/terms/view/T06406) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) in the protein backbone ('protein backbone': http://edamontology.org/operation_1825). Unit: degrees (°) ('degree': http://qudt.org/vocab/unit/DEG)."
           },
           "residue_backbone_psi_angle": {
             "type": "number",
-            "description": "The field 'residue_backbone_psi_angle' indicates the backbone psi torsion angle ('torsion angle': https://goldbook.iupac.org/terms/view/T06406) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) in the protein backbone ('protein backbone': http://edamontology.org/operation_1825)."
+            "description": "The field 'residue_backbone_psi_angle' indicates the backbone psi torsion angle ('torsion angle': https://goldbook.iupac.org/terms/view/T06406) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) in the protein backbone ('protein backbone': http://edamontology.org/operation_1825). Unit: degrees (°) ('degree': http://qudt.org/vocab/unit/DEG)."
           },
           "residue_net_charge": {
             "type": "number",
-            "description": "The field 'residue_net_charge' indicates the net electric charge ('net electric charge': https://goldbook.iupac.org/terms/view/N04111) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'residue_net_charge' indicates the net electric charge ('net electric charge': https://goldbook.iupac.org/terms/view/N04111) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782). Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "residue_pka": {
             "type": "number",
-            "description": "The field 'residue_pka' indicates the pKa value ('pKa': https://goldbook.iupac.org/terms/view/15441) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'residue_pka' indicates the pKa value ('pKa': https://goldbook.iupac.org/terms/view/15441) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782). Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "residue_volume": {
             "type": "number",
-            "description": "The field 'residue_volume' indicates the volume ('volume': http://purl.obolibrary.org/obo/PATO_0000918) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'residue_volume' indicates the volume ('volume': http://purl.obolibrary.org/obo/PATO_0000918) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782). Unit: cubic angstroms (Å^3) ('cubic angstrom': http://qudt.org/vocab/unit/ANGSTROM3)."
           },
           "residue_hydrophobicity": {
             "type": "number",
-            "description": "The field 'residue_hydrophobicity' indicates the hydrophobicity ('hydrophobicity': https://goldbook.iupac.org/terms/view/HT06964) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'residue_hydrophobicity' indicates the hydrophobicity ('hydrophobicity': https://goldbook.iupac.org/terms/view/HT06964) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782). Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "residue_molecular_weight": {
             "type": "number",
-            "description": "The field 'residue_molecular_weight' indicates the molecular weight ('molecular weight': https://goldbook.iupac.org/terms/view/R05271) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'residue_molecular_weight' indicates the molecular weight ('molecular weight': https://goldbook.iupac.org/terms/view/R05271) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782). Unit: daltons (Da) ('dalton': http://qudt.org/vocab/unit/DA)."
           },
           "residue_isoelectric_point": {
             "type": "number",
-            "description": "The field 'residue_isoelectric_point' indicates the isoelectric point ('isoelectric point': https://goldbook.iupac.org/terms/view/I03275) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'residue_isoelectric_point' indicates the isoelectric point ('isoelectric point': https://goldbook.iupac.org/terms/view/I03275) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782). Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "residue_root_mean_square_fluctuation": {
             "type": "number",
-            "description": "The field 'residue_root_mean_square_fluctuation' indicates the root mean square fluctuation ('root mean square fluctuation': https://manual.gromacs.org/current/onlinehelp/gmx-rmsf.html) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'residue_root_mean_square_fluctuation' indicates the root mean square fluctuation ('root mean square fluctuation': https://manual.gromacs.org/current/onlinehelp/gmx-rmsf.html) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782). Unit: angstroms (Å) ('angstrom': http://qudt.org/vocab/unit/ANGSTROM)."
           },
           "residue_sequence_conservation_score": {
             "type": "number",
-            "description": "The field 'residue_sequence_conservation_score' indicates the sequence conservation score ('sequence conservation': http://edamontology.org/operation_0448; 'score': http://edamontology.org/data_1772) of the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782)."
+            "description": "The field 'residue_sequence_conservation_score' indicates the sequence conservation score based on normalized Shannon information content ('Shannon entropy': https://mathworld.wolfram.com/Entropy.html; 'information content': https://www.ebsco.com/research-starters/library-and-information-science/information-content) of the residue position, calculated based on the 'normalized_emission_probability'. Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "residue_embedding": {
             "type": "array",
             "description": "The field 'residue_embedding' indicates the embedding ('embedding': https://developers.google.com/machine-learning/crash-course/embeddings) generated by the ESM-2 protein language model ('ESM-2': https://docs.nvidia.com/bionemo-framework/2.0/models/esm2/; 'protein language model': https://synbiointel.com/glossary/protein-language-model/) for the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782), represented as a numerical vector ('numerical vector': https://mathworld.wolfram.com/Vector.html).",
             "items": {
               "type": "number"
-            }
-          },
-          "is_at_mutation_site": {
-            "type": "boolean",
-            "description": "The field 'is_at_mutation_site' indicates whether the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) is located at an amino acid substitution site ('amino acid substitution': http://purl.obolibrary.org/obo/SO_0001606)."
+            },
+            "oneOf": [
+              {
+                "minItems": 320,
+                "maxItems": 320,
+                "description": "Embedding length generated by esm2_t6_8M_UR50D."
+              },
+              {
+                "minItems": 480,
+                "maxItems": 480,
+                "description": "Embedding length generated by esm2_t12_35M_UR50D."
+              },
+              {
+                "minItems": 640,
+                "maxItems": 640,
+                "description": "Embedding length generated by esm2_t30_150M_UR50D."
+              }
+            ]
           },
           "is_in_hydrophobic_cluster": {
             "type": "boolean",
@@ -162,6 +185,10 @@
           "is_in_binding_pocket": {
             "type": "boolean",
             "description": "The field 'is_in_binding_pocket' indicates whether the residue ('residue': http://purl.obolibrary.org/obo/GENO_0000782) is included in a binding pocket ('binding pocket': https://schlessinger-lab.github.io/pyvol/index.html)."
+          },
+          "is_at_mutation_site": {
+            "type": "boolean",
+            "description": "The field 'is_at_mutation_site' indicates whether this residue node is at an amino acid substitution site."
           }
         },
         "required": [
@@ -169,29 +196,7 @@
           "node_type",
           "node_type_one_hot_encoding",
           "residue_index",
-          "residue_name",
-          "residue_name_one_hot_encoding",
-          "residue_alpha_carbon_coordinate",
-          "residue_chemical_classification",
-          "residue_chemical_classification_one_hot_encoding",
-          "residue_secondary_structure",
-          "residue_secondary_structure_one_hot_encoding",
-          "residue_relative_solvent_accessibility",
-          "residue_backbone_phi_angle",
-          "residue_backbone_psi_angle",
-          "residue_net_charge",
-          "residue_pka",
-          "residue_volume",
-          "residue_hydrophobicity",
-          "residue_molecular_weight",
-          "residue_isoelectric_point",
-          "residue_root_mean_square_fluctuation",
-          "residue_sequence_conservation_score",
-          "residue_embedding",
-          "is_at_mutation_site",
-          "is_in_hydrophobic_cluster",
-          "is_in_disordered_region",
-          "is_in_binding_pocket"
+          "residue_name"
         ],
         "additionalProperties": false
       },
@@ -206,18 +211,20 @@
           "node_type": {
             "type": "string",
             "const": "substrate",
-            "description": "The field 'node_type' indicates the type ('type': http://purl.org/dc/terms/type) of node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node), with value 'substrate' indicating a substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'node_type' indicates the type of node ('node': https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node), with value 'substrate' indicating a substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
           },
           "node_type_one_hot_encoding": {
             "type": "array",
-            "description": "The field 'node_type_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the node type ('type': http://purl.org/dc/terms/type).",
+            "description": "The field 'node_type_one_hot_encoding' indicates the one-hot encoding ('one-hot encoding': https://developers.google.com/machine-learning/glossary#one-hot_encoding) of the node type.",
             "items": {
               "type": "integer",
               "enum": [
                 0,
                 1
               ]
-            }
+            },
+            "minItems": 2,
+            "maxItems": 2
           },
           "substrate_index": {
             "type": "integer",
@@ -225,7 +232,7 @@
           },
           "substrate_name": {
             "type": "string",
-            "description": "The field 'substrate_name' indicates the name ('name': http://xmlns.com/foaf/0.1/name) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_name' indicates the name of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
           },
           "substrate_smiles": {
             "type": "string",
@@ -233,75 +240,77 @@
           },
           "substrate_atom_count": {
             "type": "integer",
-            "description": "The field 'substrate_atom_count' indicates the count ('count': http://purl.obolibrary.org/obo/STATO_0000047) of atoms ('atom': https://goldbook.iupac.org/terms/view/A00493) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_atom_count' indicates the count of atoms ('atom': https://goldbook.iupac.org/terms/view/A00493) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
           },
           "substrate_molecular_weight": {
             "type": "number",
-            "description": "The field 'substrate_molecular_weight' indicates the molecular weight ('molecular weight': https://goldbook.iupac.org/terms/view/R05271) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_molecular_weight' indicates the molecular weight ('molecular weight': https://goldbook.iupac.org/terms/view/R05271) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate). Unit: daltons (Da) ('dalton': http://qudt.org/vocab/unit/DA)."
           },
           "substrate_logp": {
             "type": "number",
-            "description": "The field 'substrate_logp' indicates the calculated logP value ('LogP': https://doktormike.gitlab.io/posts/navigating-logp-logd-pka-and-logs-a-physicists-guide/) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_logp' indicates the calculated logP value ('LogP': https://doktormike.gitlab.io/posts/navigating-logp-logd-pka-and-logs-a-physicists-guide/) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate). Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "substrate_tpsa": {
             "type": "number",
-            "description": "The field 'substrate_tpsa' indicates the topological polar surface area ('TPSA': https://www.rdkit.org/docs/GettingStartedInPython.html#descriptor-calculation) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
+            "description": "The field 'substrate_tpsa' indicates the topological polar surface area ('TPSA': https://www.rdkit.org/docs/GettingStartedInPython.html#descriptor-calculation) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html). Unit: square angstroms (Å^2) ('angstrom': http://qudt.org/vocab/unit/ANGSTROM)."
           },
           "substrate_heavy_atom_count": {
             "type": "integer",
-            "description": "The field 'substrate_heavy_atom_count' indicates the count ('count': http://purl.obolibrary.org/obo/STATO_0000047) of heavy atoms ('atom': https://goldbook.iupac.org/terms/view/A00493) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_heavy_atom_count' indicates the count of heavy atoms ('atom': https://goldbook.iupac.org/terms/view/A00493) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
           },
           "substrate_hbond_donor_count": {
             "type": "integer",
-            "description": "The field 'substrate_hbond_donor_count' indicates the count ('count': http://purl.obolibrary.org/obo/STATO_0000047) of hydrogen bond donors ('hydrogen bond': https://goldbook.iupac.org/terms/view/H02899) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
+            "description": "The field 'substrate_hbond_donor_count' indicates the count of hydrogen bond donors ('hydrogen bond': https://goldbook.iupac.org/terms/view/H02899) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
           },
           "substrate_hbond_acceptor_count": {
             "type": "integer",
-            "description": "The field 'substrate_hbond_acceptor_count' indicates the count ('count': http://purl.obolibrary.org/obo/STATO_0000047) of hydrogen bond acceptors ('hydrogen bond': https://goldbook.iupac.org/terms/view/H02899) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
+            "description": "The field 'substrate_hbond_acceptor_count' indicates the count of hydrogen bond acceptors ('hydrogen bond': https://goldbook.iupac.org/terms/view/H02899) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
           },
           "substrate_rotatable_bond_count": {
             "type": "integer",
-            "description": "The field 'substrate_rotatable_bond_count' indicates the count ('count': http://purl.obolibrary.org/obo/STATO_0000047) of rotatable bonds ('bond': https://goldbook.iupac.org/terms/view/B00701) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
+            "description": "The field 'substrate_rotatable_bond_count' indicates the count of rotatable bonds ('bond': https://goldbook.iupac.org/terms/view/B00701) in the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
           },
           "substrate_molar_refractivity": {
             "type": "number",
-            "description": "The field 'substrate_molar_refractivity' indicates the molar refractivity ('molar refractivity': https://old.iupac.org/reports/1997/6905vandewaterbeemd/glossary.html) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
+            "description": "The field 'substrate_molar_refractivity' indicates the molar refractivity ('molar refractivity': https://old.iupac.org/reports/1997/6905vandewaterbeemd/glossary.html) of the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html). Unit: cubic centimeters per mole (cm^3/mol) ('cubic centimeter': http://qudt.org/vocab/unit/CentiM3; 'mole': http://qudt.org/vocab/unit/MOL)."
           },
           "substrate_structure_energy": {
             "type": "number",
-            "description": "The field 'substrate_structure_energy' indicates the energy ('energy': http://purl.obolibrary.org/obo/PATO_0001021) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_structure_energy' indicates the energy ('energy': http://purl.obolibrary.org/obo/PATO_0001021) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate). Unit: kilocalories per mole (kcal/mol) ('kilocalorie': http://qudt.org/vocab/unit/KiloCAL; 'mole': http://qudt.org/vocab/unit/MOL)."
           },
           "substrate_structure_max_3d_diameter": {
             "type": "number",
-            "description": "The field 'substrate_structure_max_3d_diameter' indicates the maximum three-dimensional diameter ('diameter': http://purl.obolibrary.org/obo/PATO_0001334) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_structure_max_3d_diameter' indicates the maximum three-dimensional diameter ('diameter': http://purl.obolibrary.org/obo/PATO_0001334) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate). Unit: angstroms (Å) ('angstrom': http://qudt.org/vocab/unit/ANGSTROM)."
           },
           "substrate_structure_mean_pairwise_atom_distance": {
             "type": "number",
-            "description": "The field 'substrate_structure_mean_pairwise_atom_distance' indicates the mean pairwise atom distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_structure_mean_pairwise_atom_distance' indicates the mean pairwise atom distance ('distance': http://purl.obolibrary.org/obo/PATO_0000040) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate). Unit: angstroms (Å) ('angstrom': http://qudt.org/vocab/unit/ANGSTROM)."
           },
           "substrate_structure_std_pairwise_atom_distance": {
             "type": "number",
-            "description": "The field 'substrate_structure_std_pairwise_atom_distance' indicates the standard deviation ('standard deviation': http://purl.obolibrary.org/obo/STATO_0000237) of pairwise atom distances ('distance': http://purl.obolibrary.org/obo/PATO_0000040) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_structure_std_pairwise_atom_distance' indicates the standard deviation ('standard deviation': http://purl.obolibrary.org/obo/STATO_0000237) of pairwise atom distances ('distance': http://purl.obolibrary.org/obo/PATO_0000040) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate). Unit: angstroms (Å) ('angstrom': http://qudt.org/vocab/unit/ANGSTROM)."
           },
           "substrate_structure_asphericity": {
             "type": "number",
-            "description": "The field 'substrate_structure_asphericity' indicates the asphericity ('asphericity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
+            "description": "The field 'substrate_structure_asphericity' indicates the asphericity ('asphericity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html). Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "substrate_structure_spherocity": {
             "type": "number",
-            "description": "The field 'substrate_structure_spherocity' indicates the spherocity ('spherocity': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
+            "description": "The field 'substrate_structure_spherocity' indicates the spherocity index ('spherocity index': https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html). Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "substrate_structure_principal_moment_ratio": {
             "type": "number",
-            "description": "The field 'substrate_structure_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments of inertia ('moment of inertia': https://goldbook.iupac.org/terms/view/M04006) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate)."
+            "description": "The field 'substrate_structure_principal_moment_ratio' indicates the ratio of the largest to the smallest principal moments of inertia ('moment of inertia': https://goldbook.iupac.org/terms/view/M03954) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate). Unit: dimensionless ('dimensionless': http://qudt.org/vocab/unit/UNITLESS)."
           },
           "substrate_structure_radius_of_gyration": {
             "type": "number",
-            "description": "The field 'substrate_structure_radius_of_gyration' indicates the radius of gyration ('radius of gyration': https://goldbook.iupac.org/terms/view/R05121) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html)."
+            "description": "The field 'substrate_structure_radius_of_gyration' indicates the radius of gyration ('radius of gyration': https://goldbook.iupac.org/terms/view/R05121) of a possible molecular structure ('molecular structure': http://edamontology.org/data_0883) generated for the substrate ('substrate': https://purl.dsmz.de/schema/Substrate) calculated by RDKit software ('RDKit': https://www.rdkit.org/docs/index.html). Unit: angstroms (Å) ('angstrom': http://qudt.org/vocab/unit/ANGSTROM)."
           },
           "docked_substrate_center_coordinate": {
             "type": "array",
-            "description": "The field 'docked_substrate_center_coordinate' indicates the center coordinate ('coordinate': https://mathworld.wolfram.com/Coordinates.html) of the docked substrate ('substrate': https://purl.dsmz.de/schema/Substrate) in the enzyme-substrate complex ('enzyme': https://purl.dsmz.de/schema/Enzyme; 'substrate': https://purl.dsmz.de/schema/Substrate; 'complex': https://goldbook.iupac.org/terms/view/C01203).",
+            "description": "The field 'docked_substrate_center_coordinate' indicates the center coordinate ('coordinate': https://mathworld.wolfram.com/Coordinates.html) of the docked substrate ('substrate': https://purl.dsmz.de/schema/Substrate) in the enzyme-substrate complex ('enzyme': https://purl.dsmz.de/schema/Enzyme; 'substrate': https://purl.dsmz.de/schema/Substrate; 'complex': https://goldbook.iupac.org/terms/view/C01203). Unit: angstroms (Å) ('angstrom': http://qudt.org/vocab/unit/ANGSTROM).",
+            "minItems": 3,
+            "maxItems": 3,
             "items": {
               "type": "number"
             }
@@ -323,27 +332,7 @@
           "node_type",
           "node_type_one_hot_encoding",
           "substrate_index",
-          "substrate_name",
-          "substrate_smiles",
-          "substrate_atom_count",
-          "substrate_molecular_weight",
-          "substrate_logp",
-          "substrate_tpsa",
-          "substrate_heavy_atom_count",
-          "substrate_hbond_donor_count",
-          "substrate_hbond_acceptor_count",
-          "substrate_rotatable_bond_count",
-          "substrate_molar_refractivity",
-          "substrate_structure_energy",
-          "substrate_structure_max_3d_diameter",
-          "substrate_structure_mean_pairwise_atom_distance",
-          "substrate_structure_std_pairwise_atom_distance",
-          "substrate_structure_asphericity",
-          "substrate_structure_spherocity",
-          "substrate_structure_principal_moment_ratio",
-          "substrate_structure_radius_of_gyration",
-          "docked_substrate_center_coordinate",
-          "substrate_fingerprint_encoding"
+          "substrate_name"
         ],
         "additionalProperties": false
       }
