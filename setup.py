@@ -38,7 +38,7 @@ setup(
     # Core runtime dependencies based on the tool's functionality
     install_requires=[
         "biopython>=1.86",          # Sequence handling, residue mapping
-        "numpy>=1.23.5",            # Numerical operations
+        "numpy>=1.23.5,<2",         # Numerical operations
         "packaging",                # Version handling
         # 'rdkit', 'openmm', 'prody', 'fair-esm', 'vina' are NOT required here,
         # because they are run-time dependencies of the individual analysis tools.
