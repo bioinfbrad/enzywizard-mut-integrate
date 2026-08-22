@@ -46,7 +46,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "enzywizard-mut_integrate = enzywizard_mut_integrate.cli:main",
+            "enzywizard-mut-integrate = enzywizard_mut_integrate.cli:main",
         ],
     },
     include_package_data=True,
