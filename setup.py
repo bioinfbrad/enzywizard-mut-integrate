@@ -1,17 +1,11 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 import os
-import sys
 
-# --- Extract version from version.py without loading the package ---
-# This is the most reliable way if the file exists
-try:
-    version_file = os.path.join(os.path.dirname(__file__), 'src', 'enzywizard_mut_integrate', 'version.py')
-    with open(version_file) as f:
-        exec(f.read())  # defines __version__
-except (FileNotFoundError, NameError):
-    # Fallback version if version.py is missing
-    __version__ = "0.1.0"
+# Read the version from version.py without importing the package
+version_file = os.path.join(os.path.dirname(__file__), 'src', 'enzywizard_mut_integrate', 'version.py')
+with open(version_file) as f:
+    exec(f.read())  # defines __version__
 
 # --- Read the long description from README.md ---
 try:
